@@ -1,7 +1,7 @@
-import { ButtonBase, IconButton, ListItem, Typography, List, ListItemButton, ListItemIcon, ListItemText, Switch, createTheme, Theme, ThemeProvider } from '@mui/material'
-import { Add, ArrowForward, ArrowRight, DarkMode, GridView, LightMode, MoreVert, VisibilityOff } from '@mui/icons-material'
+import { ButtonBase, IconButton, ListItem, Typography, List, ListItemButton, ListItemIcon, ListItemText, Switch } from '@mui/material'
+import { Add, ArrowRight, DarkMode, GridView, LightMode, MoreVert, VisibilityOff } from '@mui/icons-material'
 import { ReactElement, useState } from 'react'
-import { red } from '@mui/material/colors'
+import { ColumnHeader } from './atoms/ColumnHeader'
 
 export {App}
 
@@ -10,36 +10,39 @@ const boards: string[] = ['Platform Launch', 'Marketing Plan', 'Roadmap']
 const styles: {[name: string]: React.CSSProperties} = {
     container: {
         height: '100%',
-        width: '100%'
+        width: '100%',
+        overflow: 'hidden'
     },
     leftSection: {
         top: 0,
         left: 0,
         height: '100%',
-        backgroundColor: 'rgba(44,44,56,255)',
         display: 'flex',
         flexDirection: 'column',
         width: '300px',
         position: 'fixed',
         overflowX: 'hidden',
-        transition: '.5s',
+        transition: 'width .5s, background-color .5s',
         zIndex: 1
     },
     rigthSection: {
         width: '100%',
         height: '100%',
-        transition: 'margin-left .5s, width .5s'
+        transition: 'margin-left .5s, width .5s',
+        overflowX: 'hidden'
     },
     navigation: {
         height: '80px',
         width: '100%',
-        backgroundColor: 'rgba(44,44,56,255)',
-        borderLeft: '2px solid rgba(48,48,59,255)'
+        minWidth: '500px',
+        transition: 'background-color .5s, border-left-color .5s',
+        borderLeft: '1px solid'
     },
     content: {
         height: 'calc(100% - 80px)',
         width: '100%',
-        backgroundColor: 'rgba(34,33,45,255)'
+        minWidth: '500px',
+        transition: 'background-color .5s'
     },
     navOptions: {
         height: '100%',
@@ -131,14 +134,14 @@ const styles: {[name: string]: React.CSSProperties} = {
         marginTop: 'auto',
         marginLeft: '1.5em',
         width: 'calc(100% - 3em)',
-        backgroundColor: 'rgba(33,33,45,255)',
         borderRadius: '5px',
         height: '50px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         resize: 'none',
-        minWidth: '252px'
+        minWidth: '252px',
+        transition: 'background-color .5s'
     },
     visibilityBox: {
         marginBottom: '3em',
@@ -174,21 +177,26 @@ function App(): ReactElement {
 
     const [selectedBoard, setSelectedBoard] = useState<number>(0)
     const [isSideBarShown, setSideBarShown] = useState<boolean>(true)
+    const [isDarkMode, setDarkMode] = useState<boolean>(true)
 
     const handleHideSideMenu = () => {
         setSideBarShown((prev) => !prev)
     }
 
+    const handleLightModeChange = () => {
+        setDarkMode((prev) => !prev)
+    }
+
     return (
         <div style={styles.container}>
-            <div style={{...styles.leftSection, width: isSideBarShown ? '300px' : 0}}>
+            <div style={{...styles.leftSection, width: isSideBarShown ? '300px' : 0, backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)'}}>
                 <div style={styles.logoBox}>
                     <div style={styles.logo}>
                         <div style={styles.stob1}/>
                         <div style={styles.stob2}/>
                         <div style={styles.stob3}/>
                     </div>
-                    <Typography fontSize='28px' fontWeight='bold'>
+                    <Typography sx={{transition: 'color .5s'}} color={isDarkMode ? 'white' : 'black'} fontSize='28px' fontWeight='bold'>
                         kanban
                     </Typography>
                 </div>
@@ -223,9 +231,9 @@ function App(): ReactElement {
                     </Typography>
                 </ButtonBase>
 
-                <div style={styles.themeMode}>
+                <div style={{...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)'}}>
                     <LightMode htmlColor='rgba(118,122,134,255)'/>
-                    <Switch sx={{'& .MuiSwitch-switchBase': {'&.Mui-checked': {color: 'rgba(99,95,199,255)', '& + .MuiSwitch-track': {backgroundColor: 'rgba(99,95,199,255)'}}}, }}/>
+                    <Switch checked={isDarkMode} onChange={handleLightModeChange} sx={{'& .MuiSwitch-switchBase': {'&.Mui-checked': {color: 'rgba(99,95,199,255)', '& + .MuiSwitch-track': {backgroundColor: 'rgba(99,95,199,255)'}}}, }}/>
                     <DarkMode htmlColor='rgba(118,122,134,255)'/>
                 </div>
 
@@ -240,8 +248,16 @@ function App(): ReactElement {
                 </div>
 
             </div>
-            <div style={{...styles.rigthSection, marginLeft: isSideBarShown ? '300px' : 0, width: isSideBarShown ? 'calc(100% - 300px)' : '100%'}}>
-                <div style={{...styles.navigation}}>
+            <div style={{
+                ...styles.rigthSection, 
+                marginLeft: isSideBarShown ? '300px' : 0, 
+                width: isSideBarShown ? 'calc(100% - 300px)' : '100%'
+                }}>
+                <div style={{
+                    ...styles.navigation, 
+                    backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)',
+                    borderLeftColor: isDarkMode ? 'rgba(50,50,62,255)' : 'rgba(251,251,251,255)'
+                    }}>
                     <ul style={{...styles.navOptions}}>
                         <li>
                             <div style={{...styles.logo, display: isSideBarShown ? 'none' : 'flex'}}>
@@ -251,7 +267,7 @@ function App(): ReactElement {
                             </div>
                         </li>
                         <li style={styles.navTitle}>
-                            <Typography fontSize={'20px'}>
+                            <Typography sx={{transition: 'color .5s'}} color={isDarkMode ? 'white' : 'black'} fontSize={'20px'}>
                                 Platform Launch
                             </Typography>
                         </li>
@@ -268,13 +284,18 @@ function App(): ReactElement {
                             </ButtonBase>
                         </li>
                         <li>
-                            <IconButton aria-label="delete">
+                            <IconButton>
                                 <MoreVert htmlColor='rgba(99,95,199,255)' />
                             </IconButton>
                         </li>
                     </ul>
                 </div>
-                <div style={{...styles.content}}></div>
+                <div style={{
+                    ...styles.content, 
+                    backgroundColor: isDarkMode ? 'rgba(34,33,45,255)' : 'rgba(245,247,254,255)'
+                }}>
+                    <ColumnHeader style={{marginLeft: '1.5em'}} color='blue'>todo (5)</ColumnHeader>
+                </div>
             </div>
         </div>
     )
