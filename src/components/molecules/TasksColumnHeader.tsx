@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material"
+import { HeaderTypography } from "../atoms/HeaderTypography"
 import React from "react"
 
 export {ColumnHeader}
@@ -33,9 +33,7 @@ function ColumnHeader({children, color, style}: ColumnHeaderProps): React.ReactE
         <div style={{...styles.container, ...style}}>
             <div style={styles.contentWrapper}>
                 <div style={styles.circle}/>
-                <Typography width={'max-content'} color='rgba(118,122,134,255)' textTransform='uppercase' fontSize="10px" letterSpacing='2px' fontWeight='bold'>
-                    {children}
-                </Typography>
+                <HeaderTypography>{children}</HeaderTypography>
             </div>
         </div>
     )

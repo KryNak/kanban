@@ -18,17 +18,18 @@ function TodoCard({subtaskAmount, subtaskCompleted, darkMode, children}: TodoCar
             padding: '20px 20px',
             borderRadius: '5px',
             display: 'grid',
-            gap: '5px'
+            gap: '5px',
+            transition: 'background-color .5s'
         }
     }
 
     return (
         <div style={{...styles.todoCard, backgroundColor: darkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)'}}>
-            <Typography color={darkMode ? 'white' : 'black'}>
+            <Typography sx={{transition: 'color .5s'}} fontSize='14px' color={darkMode ? 'white' : 'black'}>
                 {children}
             </Typography>
             <Typography fontSize='12px' color={'rgba(118,122,134,255)'}>
-                {subtaskCompleted} of {subtaskAmount} subtasks
+                {subtaskCompleted} of {subtaskAmount} substasks
             </Typography>
         </div>
     )

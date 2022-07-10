@@ -18,13 +18,15 @@ class ProgressColumn {
 
     name: string
     tasks: Todo[]
+    color: string
 
-    constructor(name: string, tasks: Todo[]) {
+    constructor(name: string, tasks: Todo[], color: string) {
         this.name = name
         this.tasks = tasks
+        this.color = color
     }
 
-    getMocketProgressColumns(): ProgressColumn[] {
+    static getMocketProgressColumns(): ProgressColumn[] {
         return [
             new ProgressColumn(
                 'Todo (4)',
@@ -33,7 +35,8 @@ class ProgressColumn {
                     new Todo('Build UI for search', 1, 0),
                     new Todo('Build settings UI', 2, 0),
                     new Todo('QA and test all mayor users journeys', 2, 0)
-                ]
+                ],
+                'red'
             ),
             new ProgressColumn(
                 'Doing (6)',
@@ -44,7 +47,8 @@ class ProgressColumn {
                     new Todo('Add search enpoints', 2, 1),
                     new Todo('Add authentication enpoint', 2, 1),
                     new Todo('Reasearch pricing points of various competitors and trail different business models', 3, 1)
-                ]
+                ],
+                'blue'
             ),
             new ProgressColumn(
                 'Done (7)',
@@ -56,7 +60,8 @@ class ProgressColumn {
                     new Todo('Market discovery', 1, 1),
                     new Todo('Competitor analysis', 2, 2),
                     new Todo('Reasearch the market', 2, 2)
-                ]
+                ],
+                'green'
             )
         ]
     }
