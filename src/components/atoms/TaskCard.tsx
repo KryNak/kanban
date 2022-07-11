@@ -13,7 +13,7 @@ function TodoCard({subtaskAmount, subtaskCompleted, darkMode, children}: TodoCar
 
     const styles: {[name: string]: React.CSSProperties} = {
         todoCard: {
-            width: '250px',
+            width: '350px',
             height: 'max-content',
             padding: '20px 20px',
             borderRadius: '5px',

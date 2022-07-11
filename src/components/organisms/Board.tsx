@@ -26,11 +26,11 @@ function Board({columns, darkMode}: BoardProps): React.ReactElement {
         addColumn: {
             marginTop: '50px', 
             borderRadius: '5px', 
-            width: '250px', 
+            width: '350px',
+            minWidth: '350px',
             backgroundColor: darkMode ? 'rgba(35,35,48,255)' : 'rgba(233,239,249,255)',
             height: 'calc(100% - 50px - 50px)',
             minHeight: '100px',
-            minWidth: '250px',
             transition: 'background-color .5s'
         }
     }
