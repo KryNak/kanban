@@ -3,6 +3,8 @@ import { ButtonBase, Dialog, IconButton, Menu, MenuItem, Typography } from "@mui
 import { CSSProperties, Dispatch, ReactElement, SetStateAction, useState } from "react"
 import { AddTaskDialog } from "../molecules/AddTaskDialog"
 import { colors } from '../../colors'
+import { RemovingDialogType } from "../../enums"
+import { RemovingDialog } from "../molecules/RemovingDialog"
 
 export{Navigation}
 
@@ -55,7 +57,7 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, isSid
 
     const [isDialogOpen, setDialogOpen] = useState<boolean>(false)
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-
+    const [isRemovingDialogOpen, setIsRemovingDialogOpen] = useState<boolean>(false)
     const isMenuOpen = Boolean(anchorEl)
 
     const handleMenuClose = () => {
@@ -64,6 +66,15 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, isSid
 
     const handleMenuClick: (e: React.MouseEvent<HTMLElement>) => void = (e) => {
         setAnchorEl(e.currentTarget)
+    }
+
+    const handleRemovingDialogClose = () => {
+        setIsRemovingDialogOpen(false)
+    }
+
+    const handleRemovingDialogOpen = () => {
+        setAnchorEl(null)
+        setIsRemovingDialogOpen(true)
     }
 
     return (<>
@@ -129,11 +140,12 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, isSid
                         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
                         <MenuItem sx={{color: isDarkMode ? 'white': 'black'}}>Edit Board</MenuItem>
-                        <MenuItem sx={{color: '#DC3545'}}>Delete Board</MenuItem>
+                        <MenuItem onClick={handleRemovingDialogOpen} sx={{color: '#DC3545'}}>Delete Board</MenuItem>
                     </Menu>
                 </li>
             </ul>
         </div>
         <AddTaskDialog isDarkMode={isDarkMode} isDialogOpen={isDialogOpen} setDialogOpen={setDialogOpen}/>
+        <RemovingDialog mode={RemovingDialogType.Board} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleRemovingDialogClose} onCancel={handleRemovingDialogClose} onDelete={() => {}}/>
     </>)
 }

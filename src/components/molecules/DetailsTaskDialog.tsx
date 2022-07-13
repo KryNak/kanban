@@ -5,6 +5,8 @@ import { colors } from '../../colors'
 import { Task } from "../../data"
 import { SubtasksChecker } from "./SubtasksChecker"
 import { MoreVert } from "@mui/icons-material"
+import { RemovingDialog } from "./RemovingDialog"
+import { RemovingDialogType } from "../../enums"
 
 export {DetailsTaskDialog}
 
@@ -116,21 +118,7 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
                 <MenuItem sx={{color: isDarkMode ? 'white': 'black'}}>Edit Task</MenuItem>
                 <MenuItem onClick={handleOpenRemovingDialog} sx={{color: '#DC3545'}}>Delete Task</MenuItem>
             </Menu>
-            <Dialog PaperProps={{style: styles.dialogPaper}} open={isRemovingDialogOpen} onClose={handleCloseRemovingDialog}>
-                <Typography color={isDarkMode ? 'white' : 'black'} fontSize={22}>Delete this task?</Typography>
-                <Typography fontSize={14} color={colors.headersGrey}>
-                    Are you sure you want to delete the "take coffee break" Task? This action will
-                    remove the task and its subtasks and cannot be reversed.
-                </Typography>
-                <div style={{display: 'flex', justifyContent: 'space-between', gap: '2em'}}>
-                    <ButtonBase sx={{...styles.buttonShared, backgroundColor: '#DC3545'}}>
-                        <Typography sx={{color: 'white'}} fontSize={14}>Delete</Typography>
-                    </ButtonBase>
-                    <ButtonBase onClick={handleCloseRemovingDialog} sx={{...styles.buttonShared, backgroundColor: colors.violet}}>
-                        <Typography sx={{color: 'white'}} fontSize={14}>Cancel</Typography>
-                    </ButtonBase>
-                </div>
-            </Dialog>
+            <RemovingDialog mode={RemovingDialogType.Task} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleCloseRemovingDialog} onCancel={handleCloseRemovingDialog} onDelete={() => {}}/>
         </>
     )
 }
