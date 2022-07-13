@@ -26,7 +26,7 @@ const SubtasksCreator: (props: SubtasksCreatorProps) => ReactElement = ({isDarkM
 
     return (
         <div style={{width: '100%'}}>
-            <Typography sx={{marginBottom: '0.5em'}} fontSize={12} color={isDarkMode ? 'white': 'black'}>Subtasks</Typography>
+            <Typography sx={{marginBottom: '0.5em'}} fontSize={14} color={isDarkMode ? 'white': 'black'}>Subtasks</Typography>
             <List sx={{margin: '0', padding: 0, width: '100%'}}>
                 {
                     subtasks && subtasks.map((subtask, index) => {
@@ -41,7 +41,7 @@ const SubtasksCreator: (props: SubtasksCreatorProps) => ReactElement = ({isDarkM
                     })
                 }
             </List>
-            <ButtonBase onClick={() => {setSubtasks((prev) => [...prev, `e.g. ${faker.hacker.phrase()}`])}} sx={styles.addSubtaskButton}>+ Add New Subtasks</ButtonBase>
+            <ButtonBase onClick={() => {setSubtasks((prev) => [...prev, `e.g. Make coffee`])}} sx={styles.addSubtaskButton}>+ Add New Subtasks</ButtonBase>
         </div>
     )
 }

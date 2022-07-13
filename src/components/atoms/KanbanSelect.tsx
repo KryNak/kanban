@@ -14,7 +14,7 @@ const KanbanSelect: (props: KanbanSelectProps) => ReactElement = ({isDarkMode}: 
     const selectStyle= {
         width: '100%',
         color: isDarkMode ? 'white' : 'black',
-        fontSize: '12px',
+        fontSize: '14px',
         '& fieldset': {
             borderColor: colors.headersGrey
         },
@@ -31,7 +31,7 @@ const KanbanSelect: (props: KanbanSelectProps) => ReactElement = ({isDarkMode}: 
 
     return (
         <div style={{width: '100%'}}>
-            <Typography sx={{paddingBottom: '0.5em'}} fontSize={12} color={isDarkMode ? 'white': 'black'}>Status</Typography>
+            <Typography sx={{paddingBottom: '0.5em'}} fontSize={14} color={isDarkMode ? 'white': 'black'}>Status</Typography>
             <Select MenuProps={{sx: {'& .MuiPaper-root': {backgroundColor: isDarkMode ? colors.primaryDark : colors.primaryLight, '& li': {color: isDarkMode ? 'white' : 'black'}}}}} IconComponent={KeyboardArrowDown} sx={selectStyle}>
                 <MenuItem value={10}>Todo</MenuItem>
                 <MenuItem value={20}>Doing</MenuItem>

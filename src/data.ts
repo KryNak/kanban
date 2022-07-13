@@ -1,15 +1,27 @@
-export {Todo, ProgressColumn}
+export {Task, ProgressColumn, Subtask}
 
-class Todo {
+class Subtask {
+
+    description: string
+    checked: boolean
+
+    constructor(description: string, checked: boolean) {
+        this.description = description
+        this.checked = checked
+    }
+
+}
+
+class Task {
 
     name: string
-    subtasksAmount: number
-    subtasksCompleted: number
+    subtasks: Subtask[]
+    description: string
 
-    constructor(name: string, subtasksAmount: number, subtasksCompleted: number) {
+    constructor(name: string, subtasks: Subtask[], description: string) {
         this.name = name
-        this.subtasksAmount = subtasksAmount
-        this.subtasksCompleted = subtasksCompleted
+        this.subtasks = subtasks
+        this.description = description
     }
 
 }
@@ -17,12 +29,12 @@ class Todo {
 class ProgressColumn {
 
     name: string
-    tasks: Todo[]
+    subtasks: Task[]
     color: string
 
-    constructor(name: string, tasks: Todo[], color: string) {
+    constructor(name: string, tasks: Task[], color: string) {
         this.name = name
-        this.tasks = tasks
+        this.subtasks = tasks
         this.color = color
     }
 
@@ -31,35 +43,35 @@ class ProgressColumn {
             new ProgressColumn(
                 'Todo (4)',
                 [
-                    new Todo('Build UI for onboarding flow', 3, 0),
-                    new Todo('Build UI for search', 1, 0),
-                    new Todo('Build settings UI', 2, 0),
-                    new Todo('QA and test all mayor users journeys', 2, 0)
+                    new Task('Build UI for onboarding flow', [new Subtask('Sign up page', false), new Subtask('Sign in page', false), new Subtask('Welcome page', false)], "We know what we're planning to build for version one. Now we need to finalise the first pricing model we'll use. Keep iterating the subtasks until we have a coherent proposition."),
+                    new Task('Build UI for search', [], ''),
+                    new Task('Build settings UI', [], ''),
+                    new Task('QA and test all mayor users journeys', [], '')
                 ],
                 'red'
             ),
             new ProgressColumn(
                 'Doing (6)',
                 [
-                    new Todo('Design settings and search pages', 3, 1),
-                    new Todo('Add account management enpoints', 3, 2),
-                    new Todo('Design onboarding flow', 3, 1),
-                    new Todo('Add search enpoints', 2, 1),
-                    new Todo('Add authentication enpoint', 2, 1),
-                    new Todo('Reasearch pricing points of various competitors and trail different business models', 3, 1)
+                    new Task('Design settings and search pages', [], ''),
+                    new Task('Add account management enpoints', [], ''),
+                    new Task('Design onboarding flow', [], ''),
+                    new Task('Add search enpoints', [], ''),
+                    new Task('Add authentication enpoint', [], ''),
+                    new Task('Reasearch pricing points of various competitors and trail different business models', [], '')
                 ],
                 'blue'
             ),
             new ProgressColumn(
                 'Done (7)',
                 [
-                    new Todo('Conduct 5 wireframe tests', 1, 1),
-                    new Todo('Create wireframe prototype', 1, 1),
-                    new Todo('Review results of usabillity tests and iterate', 3, 2),
-                    new Todo('Create paper prototypes and conduct 10 usabillity tests with potential customers', 2, 2),
-                    new Todo('Market discovery', 1, 1),
-                    new Todo('Competitor analysis', 2, 2),
-                    new Todo('Reasearch the market', 2, 2)
+                    new Task('Conduct 5 wireframe tests', [], ''),
+                    new Task('Create wireframe prototype', [], ''),
+                    new Task('Review results of usabillity tests and iterate', [], ''),
+                    new Task('Create paper prototypes and conduct 10 usabillity tests with potential customers', [], ''),
+                    new Task('Market discovery', [], ''),
+                    new Task('Competitor analysis', [], ''),
+                    new Task('Reasearch the market', [], '')
                 ],
                 'green'
             )

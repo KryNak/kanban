@@ -70,7 +70,7 @@ function Board({columns, darkMode}: BoardProps): React.ReactElement {
             {
                 columns && columns.map((column, index) => {
                     return (
-                        <BoardColumn name={column.name} tasks={column.tasks} darkMode={darkMode} color={column.color} />
+                        <BoardColumn name={column.name} tasks={column.subtasks} darkMode={darkMode} color={column.color} />
                     )
                 })
             }

@@ -30,7 +30,7 @@ const KanbanInput: (props: KanbanInputProps) => ReactElement = ({placeholder, la
             }
         },
         '& .MuiInputBase-input': {
-            fontSize: '12px'
+            fontSize: '14px'
         }
     }
 
@@ -38,7 +38,7 @@ const KanbanInput: (props: KanbanInputProps) => ReactElement = ({placeholder, la
         <div style={{width: '100%'}}>
             {
                 label &&
-                <Typography sx={{marginBottom: '0.5em'}} fontSize={12} color={darkMode ? 'white': 'black'}>{label}</Typography>
+                <Typography sx={{marginBottom: '0.5em'}} fontSize={14} color={darkMode ? 'white': 'black'}>{label}</Typography>
             }
             <TextField autoComplete="off" value={value} rows={rows ? rows : 1} multiline={multiline} placeholder={placeholder} sx={textFieldStyle} fullWidth={true}></TextField>
         </div>

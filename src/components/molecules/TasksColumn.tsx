@@ -1,5 +1,5 @@
 import React from 'react'
-import {ProgressColumn, Todo} from '../../data'
+import {ProgressColumn, Task} from '../../data'
 import { ColumnHeader } from './TasksColumnHeader'
 import { TodoCardList } from './TaskCardList'
 export {BoardColumn}
@@ -7,7 +7,7 @@ export {BoardColumn}
 type BoardColumnProps = {
     darkMode: boolean,
     name: string,
-    tasks: Todo[],
+    tasks: Task[],
     color: string,
     style?: React.CSSProperties
 }

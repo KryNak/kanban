@@ -1,12 +1,12 @@
 import React from 'react'
-import {Todo} from '../../data'
+import { Task } from '../../data'
 import { TodoCard } from '../atoms/TaskCard'
 import { Stack } from '@mui/material'
 
 export {TodoCardList}
 
 type TodoCardListProp = {
-    tasks: Todo[],
+    tasks: Task[],
     darkMode: boolean
 }
 
@@ -85,7 +85,7 @@ function TodoCardList({tasks, darkMode}: TodoCardListProp): React.ReactElement {
             {
                 tasks && tasks.map((task, index) => {
                     return (
-                        <TodoCard key={task.name} darkMode={darkMode} subtaskAmount={task.subtasksAmount} subtaskCompleted={task.subtasksCompleted}>{task.name}</TodoCard>
+                        <TodoCard key={task.name} task={task} darkMode={darkMode}/>
                     )
                 })
             }
