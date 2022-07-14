@@ -19,7 +19,7 @@ const styles: {[name: string]: CSSProperties} = {
         position: 'fixed',
         overflowX: 'hidden',
         transition: 'width .5s, background-color .5s',
-        zIndex: 1
+        zIndex: 2
     },
     boardsAnnounce: {
         marginLeft: '1.5em',
@@ -80,7 +80,7 @@ const styles: {[name: string]: CSSProperties} = {
         left: '0',
         bottom: '3em',
         backgroundColor: colors.violet,
-        zIndex: 0
+        zIndex: 1
     }
 }
 
