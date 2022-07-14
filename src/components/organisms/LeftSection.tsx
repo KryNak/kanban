@@ -1,9 +1,107 @@
 import { Add, DarkMode, GridView, LightMode, VisibilityOff } from "@mui/icons-material"
-import { ButtonBase, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
+import { ButtonBase, Dialog, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
 import { CSSProperties, Dispatch, ReactElement, SetStateAction, useState } from "react"
 import { HeaderTypography } from "../atoms/HeaderTypography"
+import { KanbanInput } from "../atoms/KanbanInput"
+import { KanbanSelect } from "../atoms/KanbanSelect"
 import { AppLogoTitle } from "../molecules/AppLogoTitle"
+import { SubtasksCreator } from "../molecules/MultiInput"
+import { colors } from '../../colors'
 export {LeftSection}
+
+const globStyles: {[name: string]: CSSProperties} = {
+    leftSection: {
+        top: 0,
+        left: 0,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        width: '300px',
+        position: 'fixed',
+        overflowX: 'hidden',
+        transition: 'width .5s, background-color .5s',
+        zIndex: 1
+    },
+    boardsAnnounce: {
+        marginLeft: '1.5em',
+        height: '50px',
+        display: 'flex',
+        alignItems: 'center',
+        whiteSpace: 'nowrap',
+        flexShrink: 0
+    },
+    boards: {
+        paddingLeft: '1.5em',
+        listStyle: 'none',
+        flexShrink: 0
+    },
+    boarderListItemButton: {
+        padding: '5px 0 5px 1.5em',
+        borderRadius: '0 50px 50px 0',
+        flexShrink: 0
+    },
+    boarderListItem: {
+        padding: '0px',
+        width: 'calc(100% - 20px)',
+        borderRadius: '0 50px 50px 0',
+        marginBottom: '5px',
+        marginTop: '5px',
+        flexShrink: 0
+    },
+    themeMode: {
+        marginTop: 'auto',
+        marginLeft: '1.5em',
+        width: 'calc(100% - 3em)',
+        borderRadius: '5px',
+        minHeight: '50px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        resize: 'none',
+        minWidth: '252px',
+        transition: 'background-color .5s'
+    },
+    visibilityBox: {
+        marginBottom: '3em',
+        marginLeft: '1.5em',
+        marginTop: '1em'
+    },
+    visibilityButton: {
+        width: 'calc(100% - 1.5em - 4px)',
+        height: '35px', 
+        borderRadius: '10px',
+        display: 'flex', 
+        justifyContent: 'flex-start'
+    },
+    visibilityIcon: {
+        marginLeft: '5px'
+    },
+    visibilityText: {
+        paddingLeft: '1em',
+        whiteSpace: 'nowrap'
+    },
+    addBoardBase: {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        padding: '5px 0 5px calc(1.5em + 4px)',
+        height: '42px',
+        width: 'calc(100% - 20px)',
+        minWidth: '280px',
+        borderRadius: '0 50px 50px 0'
+    },
+    dialogButton: {
+        padding: '15px',
+        backgroundColor: colors.violet,
+        color: 'white',
+        borderRadius: '25px'
+    },
+    createNewButton: {
+        padding: '15px',
+        backgroundColor: colors.violet,
+        color: 'white',
+        borderRadius: '25px'
+    }
+}
 
 type LeftSectionProp = {
     isSideBarShown: boolean,
@@ -14,9 +112,21 @@ type LeftSectionProp = {
 
 const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, isDarkMode, setDarkMode, setSideBarShown}: LeftSectionProp) => {
 
+    const styles: {[name: string]: CSSProperties} = {
+        ...globStyles,
+        dialogPaper: {
+            backgroundColor: isDarkMode ? colors.primaryDark : colors.primaryLight,
+            padding: '2em',
+            height: 'max-content',
+            width: '500px',
+            display: 'flex',
+            gap: '1.5em'
+        }
+    }
     const boards: string[] = ['Platform Launch', 'Marketing Plan', 'Roadmap']
 
     const [selectedBoard, setSelectedBoard] = useState<number>(0)
+    const [isCreateBoardDialogOpen, setIsCreateBoardDialogOpen] = useState<boolean>(false)
 
     const handleLightModeChange = () => {
         setDarkMode((prev) => !prev)
@@ -26,86 +136,12 @@ const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, i
         setSideBarShown((prev) => !prev)
     }
 
-    const styles: {[name: string]: CSSProperties} = {
-        leftSection: {
-            top: 0,
-            left: 0,
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            width: '300px',
-            position: 'fixed',
-            overflowX: 'hidden',
-            transition: 'width .5s, background-color .5s',
-            zIndex: 1
-        },
-        boardsAnnounce: {
-            marginLeft: '1.5em',
-            height: '50px',
-            display: 'flex',
-            alignItems: 'center',
-            whiteSpace: 'nowrap',
-            flexShrink: 0
-        },
-        boards: {
-            paddingLeft: '1.5em',
-            listStyle: 'none',
-            flexShrink: 0
-        },
-        boarderListItemButton: {
-            padding: '5px 0 5px 1.5em',
-            borderRadius: '0 50px 50px 0',
-            flexShrink: 0
-        },
-        boarderListItem: {
-            padding: '0px',
-            width: 'calc(100% - 20px)',
-            borderRadius: '0 50px 50px 0',
-            marginBottom: '5px',
-            marginTop: '5px',
-            flexShrink: 0
-        },
-        themeMode: {
-            marginTop: 'auto',
-            marginLeft: '1.5em',
-            width: 'calc(100% - 3em)',
-            borderRadius: '5px',
-            height: '50px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            resize: 'none',
-            minWidth: '252px',
-            transition: 'background-color .5s'
-        },
-        visibilityBox: {
-            marginBottom: '3em',
-            marginLeft: '1.5em',
-            marginTop: '1em'
-        },
-        visibilityButton: {
-            width: 'calc(100% - 1.5em - 4px)',
-            height: '35px', 
-            borderRadius: '10px',
-            display: 'flex', 
-            justifyContent: 'flex-start'
-        },
-        visibilityIcon: {
-            marginLeft: '5px'
-        },
-        visibilityText: {
-            paddingLeft: '1em',
-            whiteSpace: 'nowrap'
-        },
-        addBoardBase: {
-            display: 'flex',
-            justifyContent: 'flex-start',
-            padding: '5px 0 5px calc(1.5em + 4px)',
-            height: '42px',
-            width: 'calc(100% - 20px)',
-            minWidth: '280px',
-            borderRadius: '0 50px 50px 0'
-        }
+    const handleCreateBoardDialogClose = () => {
+        setIsCreateBoardDialogOpen(false)
+    }
+
+    const handleCreateBoardDialogOpen = () => {
+        setIsCreateBoardDialogOpen(true)
     }
 
     return (
@@ -118,7 +154,7 @@ const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, i
                 </HeaderTypography>
             </div>
 
-            <List sx={{ padding: 0, minHeight: '0px' }}>
+            <List sx={{ padding: 0, minHeight: 'max-content' }}>
                 {boards.map((value, index) => {
                     return (
                         <ListItem key={index} sx={{ ...styles.boarderListItem }}>
@@ -133,7 +169,7 @@ const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, i
                 })}
             </List>
 
-            <ButtonBase sx={styles.addBoardBase}>
+            <ButtonBase onClick={handleCreateBoardDialogOpen} sx={styles.addBoardBase}>
                 <div style={{ width: '56px', display: 'flex' }}>
                     <Add htmlColor='rgba(99,95,199,255)' />
                 </div>
@@ -141,6 +177,13 @@ const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, i
                     Create New Board
                 </Typography>
             </ButtonBase>
+
+            <Dialog PaperProps={{style: styles.dialogPaper}} onClose={handleCreateBoardDialogClose} open={isCreateBoardDialogOpen}>
+                <Typography color={isDarkMode ? 'white' : 'black'} fontSize={22}>Add New Board</Typography>
+                <KanbanInput multiline={false} label="Name" placeholder="e.g. Take coffee break" darkMode={isDarkMode}/>
+                <SubtasksCreator addButtonLabel="+ Add New Column" label="Columns" isDarkMode={isDarkMode}/>
+                <ButtonBase sx={styles.createNewButton}>Create New Board</ButtonBase>
+            </Dialog>
 
             <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)' }}>
                 <LightMode htmlColor='rgba(118,122,134,255)' />

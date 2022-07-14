@@ -3,14 +3,15 @@ import { Typography, List, ListItem, ButtonBase, InputBase, IconButton } from "@
 import { ReactElement, useState } from "react"
 import { colors } from "../../colors"
 import { KanbanInput } from "../atoms/KanbanInput"
-import { faker } from '@faker-js/faker'
-export {SubtasksCreator}
+export {MultiInput as SubtasksCreator}
 
-type SubtasksCreatorProps = {
-    isDarkMode: boolean
+type MultiInputProps = {
+    isDarkMode: boolean,
+    label: string,
+    addButtonLabel: string
 }
 
-const SubtasksCreator: (props: SubtasksCreatorProps) => ReactElement = ({isDarkMode}: SubtasksCreatorProps) => {
+const MultiInput: (props: MultiInputProps) => ReactElement = ({isDarkMode, label, addButtonLabel}: MultiInputProps) => {
 
     const [subtasks, setSubtasks] = useState<string[]>([])
 
@@ -26,7 +27,7 @@ const SubtasksCreator: (props: SubtasksCreatorProps) => ReactElement = ({isDarkM
 
     return (
         <div style={{width: '100%'}}>
-            <Typography sx={{marginBottom: '0.5em'}} fontSize={14} color={isDarkMode ? 'white': 'black'}>Subtasks</Typography>
+            <Typography sx={{marginBottom: '0.5em'}} fontSize={14} color={isDarkMode ? 'white': 'black'}>{label}</Typography>
             <List sx={{margin: '0', padding: 0, width: '100%'}}>
                 {
                     subtasks && subtasks.map((subtask, index) => {
@@ -41,7 +42,7 @@ const SubtasksCreator: (props: SubtasksCreatorProps) => ReactElement = ({isDarkM
                     })
                 }
             </List>
-            <ButtonBase onClick={() => {setSubtasks((prev) => [...prev, `e.g. Make coffee`])}} sx={styles.addSubtaskButton}>+ Add New Subtasks</ButtonBase>
+            <ButtonBase onClick={() => {setSubtasks((prev) => [...prev, `e.g. Make coffee`])}} sx={styles.addSubtaskButton}>{addButtonLabel}</ButtonBase>
         </div>
     )
 }
