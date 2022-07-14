@@ -3,8 +3,9 @@ import { ButtonBase, Dialog, IconButton, Menu, MenuItem, Typography } from "@mui
 import { CSSProperties, Dispatch, ReactElement, SetStateAction, useState } from "react"
 import { AddTaskDialog } from "../molecules/AddTaskDialog"
 import { colors } from '../../colors'
-import { RemovingDialogType } from "../../enums"
+import { DialogMode, RemovingDialogType } from "../../enums"
 import { RemovingDialog } from "../molecules/RemovingDialog"
+import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
 
 export{Navigation}
 
@@ -58,6 +59,8 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, isSid
     const [isDialogOpen, setDialogOpen] = useState<boolean>(false)
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
     const [isRemovingDialogOpen, setIsRemovingDialogOpen] = useState<boolean>(false)
+    const [isEditBoardDialogOpen, setIsEditBoardDialogOpen] = useState<boolean>(false)
+
     const isMenuOpen = Boolean(anchorEl)
 
     const handleMenuClose = () => {
@@ -75,6 +78,15 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, isSid
     const handleRemovingDialogOpen = () => {
         setAnchorEl(null)
         setIsRemovingDialogOpen(true)
+    }
+
+    const handleEditBoardDialogClose = () => {
+        setIsEditBoardDialogOpen(false)
+    }
+
+    const handleEditBoardDialogOpen = () => {
+        setAnchorEl(null)
+        setIsEditBoardDialogOpen(true)
     }
 
     return (<>
@@ -139,7 +151,7 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, isSid
                         }}
                         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-                        <MenuItem sx={{color: isDarkMode ? 'white': 'black'}}>Edit Board</MenuItem>
+                        <MenuItem onClick={handleEditBoardDialogOpen} sx={{color: isDarkMode ? 'white': 'black'}}>Edit Board</MenuItem>
                         <MenuItem onClick={handleRemovingDialogOpen} sx={{color: '#DC3545'}}>Delete Board</MenuItem>
                     </Menu>
                 </li>
@@ -147,5 +159,6 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, isSid
         </div>
         <AddTaskDialog isDarkMode={isDarkMode} isDialogOpen={isDialogOpen} setDialogOpen={setDialogOpen}/>
         <RemovingDialog mode={RemovingDialogType.Board} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleRemovingDialogClose} onCancel={handleRemovingDialogClose} onDelete={() => {}}/>
+        <AddEditBoardDialog dialogMode={DialogMode.Edit} onClose={handleEditBoardDialogClose} isDarkMode={isDarkMode} isOpen={isEditBoardDialogOpen}/>
     </>)
 }

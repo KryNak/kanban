@@ -7,9 +7,11 @@ import { KanbanSelect } from "../atoms/KanbanSelect"
 import { AppLogoTitle } from "../molecules/AppLogoTitle"
 import { SubtasksCreator } from "../molecules/MultiInput"
 import { colors } from '../../colors'
+import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
+import { DialogMode } from "../../enums"
 export {LeftSection}
 
-const globStyles: {[name: string]: CSSProperties} = {
+const styles: {[name: string]: CSSProperties} = {
     leftSection: {
         top: 0,
         left: 0,
@@ -88,18 +90,6 @@ const globStyles: {[name: string]: CSSProperties} = {
         width: 'calc(100% - 20px)',
         minWidth: '280px',
         borderRadius: '0 50px 50px 0'
-    },
-    dialogButton: {
-        padding: '15px',
-        backgroundColor: colors.violet,
-        color: 'white',
-        borderRadius: '25px'
-    },
-    createNewButton: {
-        padding: '15px',
-        backgroundColor: colors.violet,
-        color: 'white',
-        borderRadius: '25px'
     }
 }
 
@@ -112,17 +102,6 @@ type LeftSectionProp = {
 
 const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, isDarkMode, setDarkMode, setSideBarShown}: LeftSectionProp) => {
 
-    const styles: {[name: string]: CSSProperties} = {
-        ...globStyles,
-        dialogPaper: {
-            backgroundColor: isDarkMode ? colors.primaryDark : colors.primaryLight,
-            padding: '2em',
-            height: 'max-content',
-            width: '500px',
-            display: 'flex',
-            gap: '1.5em'
-        }
-    }
     const boards: string[] = ['Platform Launch', 'Marketing Plan', 'Roadmap']
 
     const [selectedBoard, setSelectedBoard] = useState<number>(0)
@@ -177,13 +156,7 @@ const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, i
                     Create New Board
                 </Typography>
             </ButtonBase>
-
-            <Dialog PaperProps={{style: styles.dialogPaper}} onClose={handleCreateBoardDialogClose} open={isCreateBoardDialogOpen}>
-                <Typography color={isDarkMode ? 'white' : 'black'} fontSize={22}>Add New Board</Typography>
-                <KanbanInput multiline={false} label="Name" placeholder="e.g. Take coffee break" darkMode={isDarkMode}/>
-                <SubtasksCreator addButtonLabel="+ Add New Column" label="Columns" isDarkMode={isDarkMode}/>
-                <ButtonBase sx={styles.createNewButton}>Create New Board</ButtonBase>
-            </Dialog>
+            <AddEditBoardDialog dialogMode={DialogMode.Create} isOpen={isCreateBoardDialogOpen} isDarkMode={isDarkMode} onClose={handleCreateBoardDialogClose}/>
 
             <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)' }}>
                 <LightMode htmlColor='rgba(118,122,134,255)' />
