@@ -1,7 +1,7 @@
 import { ArrowRight, MoreVert } from "@mui/icons-material"
 import { ButtonBase, Dialog, IconButton, Menu, MenuItem, Typography } from "@mui/material"
 import { CSSProperties, Dispatch, ReactElement, SetStateAction, useState } from "react"
-import { AddTaskDialog } from "../molecules/AddTaskDialog"
+import { AddEditTaskDialog } from "../molecules/AddEditTaskDialog"
 import { colors } from '../../colors'
 import { DialogMode, RemovingDialogType } from "../../enums"
 import { RemovingDialog } from "../molecules/RemovingDialog"
@@ -54,9 +54,9 @@ const styles: {[name: string]: CSSProperties} = {
     }
 }
 
-const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, isSideBarShown, setSideBarShown}: NavigationProps) => {
+const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode}: NavigationProps) => {
 
-    const [isDialogOpen, setDialogOpen] = useState<boolean>(false)
+    const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState<boolean>(false)
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
     const [isRemovingDialogOpen, setIsRemovingDialogOpen] = useState<boolean>(false)
     const [isEditBoardDialogOpen, setIsEditBoardDialogOpen] = useState<boolean>(false)
@@ -89,6 +89,15 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, isSid
         setIsEditBoardDialogOpen(true)
     }
 
+    const handleAddTaskDialogClose = () => {
+        setIsAddTaskDialogOpen(false)
+    }
+
+    const handleAddTaskDialogOpen = () => {
+        setAnchorEl(null)
+        setIsAddTaskDialogOpen(true)
+    }
+
     return (<>
         <div style={{
             ...styles.navigation, 
@@ -101,13 +110,8 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, isSid
                         Platform Launch
                     </Typography>
                 </li>
-                <li style={{display: isSideBarShown ? 'none' : 'block'}}>
-                    <IconButton onClick={() => setSideBarShown(true)} aria-label="delete">
-                        <ArrowRight htmlColor={colors.violet} />
-                    </IconButton>
-                </li>
                 <li style={{...styles.endItems}}>
-                    <ButtonBase onClick={() => setDialogOpen(true)} sx={styles.addButton}>
+                    <ButtonBase onClick={handleAddTaskDialogOpen} sx={styles.addButton}>
                         <Typography fontSize={'12px'}>
                             + Add New Task
                         </Typography>
@@ -157,7 +161,7 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, isSid
                 </li>
             </ul>
         </div>
-        <AddTaskDialog isDarkMode={isDarkMode} isDialogOpen={isDialogOpen} setDialogOpen={setDialogOpen}/>
+        <AddEditTaskDialog dialogMode={DialogMode.Create} isDarkMode={isDarkMode} isOpen={isAddTaskDialogOpen} onClose={handleAddTaskDialogClose}/>
         <RemovingDialog mode={RemovingDialogType.Board} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleRemovingDialogClose} onCancel={handleRemovingDialogClose} onDelete={() => {}}/>
         <AddEditBoardDialog dialogMode={DialogMode.Edit} onClose={handleEditBoardDialogClose} isDarkMode={isDarkMode} isOpen={isEditBoardDialogOpen}/>
     </>)

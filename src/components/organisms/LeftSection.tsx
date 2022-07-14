@@ -1,11 +1,8 @@
-import { Add, DarkMode, GridView, LightMode, VisibilityOff } from "@mui/icons-material"
-import { ButtonBase, Dialog, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
+import { Add, DarkMode, GridView, LightMode, Visibility, VisibilityOff } from "@mui/icons-material"
+import { ButtonBase, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
 import { CSSProperties, Dispatch, ReactElement, SetStateAction, useState } from "react"
 import { HeaderTypography } from "../atoms/HeaderTypography"
-import { KanbanInput } from "../atoms/KanbanInput"
-import { KanbanSelect } from "../atoms/KanbanSelect"
 import { AppLogoTitle } from "../molecules/AppLogoTitle"
-import { SubtasksCreator } from "../molecules/MultiInput"
 import { colors } from '../../colors'
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
 import { DialogMode } from "../../enums"
@@ -63,26 +60,7 @@ const styles: {[name: string]: CSSProperties} = {
         minWidth: '252px',
         transition: 'background-color .5s'
     },
-    visibilityBox: {
-        marginBottom: '3em',
-        marginLeft: '1.5em',
-        marginTop: '1em'
-    },
-    visibilityButton: {
-        width: 'calc(100% - 1.5em - 4px)',
-        height: '35px', 
-        borderRadius: '10px',
-        display: 'flex', 
-        justifyContent: 'flex-start'
-    },
-    visibilityIcon: {
-        marginLeft: '5px'
-    },
-    visibilityText: {
-        paddingLeft: '1em',
-        whiteSpace: 'nowrap'
-    },
-    addBoardBase: {
+    leftSectionElement: {
         display: 'flex',
         justifyContent: 'flex-start',
         padding: '5px 0 5px calc(1.5em + 4px)',
@@ -90,6 +68,19 @@ const styles: {[name: string]: CSSProperties} = {
         width: 'calc(100% - 20px)',
         minWidth: '280px',
         borderRadius: '0 50px 50px 0'
+    },
+    visibilityOnButton: {
+        display: 'flex',
+        justifyContent: 'center',
+        padding: '5px 0 5px 0',
+        height: '42px',
+        width: '50px',
+        borderRadius: '0 50px 50px 0',
+        position: 'fixed',
+        left: '0',
+        bottom: '3em',
+        backgroundColor: colors.violet,
+        zIndex: 0
     }
 }
 
@@ -123,7 +114,7 @@ const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, i
         setIsCreateBoardDialogOpen(true)
     }
 
-    return (
+    return (<>
         <div style={{ ...styles.leftSection, width: isSideBarShown ? '300px' : 0, backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)' }}>
             <AppLogoTitle isDarkMode={isDarkMode} />
 
@@ -148,11 +139,11 @@ const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, i
                 })}
             </List>
 
-            <ButtonBase onClick={handleCreateBoardDialogOpen} sx={styles.addBoardBase}>
+            <ButtonBase onClick={handleCreateBoardDialogOpen} sx={styles.leftSectionElement}>
                 <div style={{ width: '56px', display: 'flex' }}>
-                    <Add htmlColor='rgba(99,95,199,255)' />
+                    <Add htmlColor={colors.violet} />
                 </div>
-                <Typography color={'rgba(99,95,199,255)'}>
+                <Typography color={colors.violet}>
                     Create New Board
                 </Typography>
             </ButtonBase>
@@ -165,15 +156,19 @@ const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, i
             </div>
 
 
-            <div style={styles.visibilityBox}>
-                <ButtonBase onClick={handleHideSideMenu} sx={styles.visibilityButton}>
-                    <VisibilityOff sx={styles.visibilityIcon} htmlColor='rgba(118,122,134,255)' />
-                    <Typography sx={styles.visibilityText} color='rgba(118,122,134,255)'>
-                        Hide Sidebar
-                    </Typography>
-                </ButtonBase>
-            </div>
+            
+            <ButtonBase onClick={handleHideSideMenu} sx={{...styles.leftSectionElement, marginTop: '1em', marginBottom: '3em'}}>
+                <div style={{ width: '56px', display: 'flex' }}>
+                    <VisibilityOff htmlColor={colors.headersGrey} />
+                </div>
+                <Typography color={colors.headersGrey}>
+                    Hide Sidebar
+                </Typography>
+            </ButtonBase>
 
         </div>
-    )
+        <ButtonBase onClick={() => {setSideBarShown(true)}} sx={styles.visibilityOnButton}>
+            <Visibility htmlColor='white' />
+        </ButtonBase>
+    </>)
 }

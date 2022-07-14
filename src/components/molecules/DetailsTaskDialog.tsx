@@ -6,7 +6,9 @@ import { Task } from "../../data"
 import { SubtasksChecker } from "./SubtasksChecker"
 import { MoreVert } from "@mui/icons-material"
 import { RemovingDialog } from "./RemovingDialog"
-import { RemovingDialogType } from "../../enums"
+import { DialogMode, RemovingDialogType } from "../../enums"
+import { AddEditBoardDialog } from "./AddEditBoardDialog"
+import { AddEditTaskDialog } from "./AddEditTaskDialog"
 
 export {DetailsTaskDialog}
 
@@ -44,9 +46,11 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
         }
     }
 
-    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-    const isMenuOpen = Boolean(anchorEl)
     const [isRemovingDialogOpen, setIsRemovingDialogOpen] = useState<boolean>(false)
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
+    const [isTaskEditDialogOpen, setIsTaskEditDialogOpen] = useState<boolean>(false)
+    const isMenuOpen = Boolean(anchorEl)
+    
 
     const handleMenuClose = () => {
         setAnchorEl(null)
@@ -64,6 +68,16 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
 
     const handleCloseRemovingDialog = () => {
         setIsRemovingDialogOpen(false)
+    }
+
+    const handleEditDialogClose = () => {
+        setIsTaskEditDialogOpen(false)
+    }
+
+    const handleEditDialogOpen = () => {
+        handleClose()
+        setAnchorEl(null)
+        setIsTaskEditDialogOpen(true)
     }
 
     return (
@@ -115,10 +129,11 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-                <MenuItem sx={{color: isDarkMode ? 'white': 'black'}}>Edit Task</MenuItem>
+                <MenuItem onClick={handleEditDialogOpen} sx={{color: isDarkMode ? 'white': 'black'}}>Edit Task</MenuItem>
                 <MenuItem onClick={handleOpenRemovingDialog} sx={{color: '#DC3545'}}>Delete Task</MenuItem>
             </Menu>
             <RemovingDialog mode={RemovingDialogType.Task} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleCloseRemovingDialog} onCancel={handleCloseRemovingDialog} onDelete={() => {}}/>
+            <AddEditTaskDialog isOpen={isTaskEditDialogOpen} onClose={handleEditDialogClose} dialogMode={DialogMode.Edit} isDarkMode={isDarkMode} />
         </>
     )
 }
