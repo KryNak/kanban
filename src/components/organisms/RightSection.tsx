@@ -1,5 +1,7 @@
-import { CSSProperties, Dispatch, ReactElement, SetStateAction } from "react"
+import axios from "axios"
+import { CSSProperties, Dispatch, ReactElement, SetStateAction, useEffect, useState } from "react"
 import { ProgressColumn } from "../../data"
+import { Board as BoardModel } from "../../dto/DTOs"
 import { Board } from "./Board"
 import { Navigation } from "./Navigation"
 
@@ -8,12 +10,27 @@ export {RightSection}
 type RightSectionProps = {
     isSideBarShown: boolean,
     isDarkMode: boolean,
-    setSideBarShown: Dispatch<SetStateAction<boolean>>
+    setSideBarShown: Dispatch<SetStateAction<boolean>>,
+    board: BoardModel | null
 }
 
-const RightSection: (props: RightSectionProps) => ReactElement = ({isSideBarShown, isDarkMode, setSideBarShown}: RightSectionProps) => {
+const RightSection: (props: RightSectionProps) => ReactElement = ({isSideBarShown, isDarkMode, setSideBarShown, board}: RightSectionProps) => {
 
     const columns: ProgressColumn[] = ProgressColumn.getMocketProgressColumns()
+    const [boardWithColumns, setBoardWithColumns] = useState<BoardModel | null>(null)
+
+    useEffect(() => {
+        if(!board) {
+            return;
+        }
+
+        const fetch = async () => {
+            const response = await axios.get<BoardModel>(`http://localhost:8080/api/boards/${board?.id}`)
+            setBoardWithColumns(response.data)
+        }
+
+        fetch().catch(console.error)
+    }, [board])
 
     const styles: {[name: string]: CSSProperties} = {
         rigthSection: {
@@ -36,7 +53,7 @@ const RightSection: (props: RightSectionProps) => ReactElement = ({isSideBarShow
             marginLeft: isSideBarShown ? '300px' : 0, 
             width: isSideBarShown ? 'calc(100% - 300px)' : '100%'
             }}>
-            <Navigation isDarkMode={isDarkMode} isSideBarShown={isSideBarShown} setSideBarShown={setSideBarShown}/>
+            <Navigation board={boardWithColumns} isDarkMode={isDarkMode} isSideBarShown={isSideBarShown} setSideBarShown={setSideBarShown}/>
             <div style={{
                 ...styles.content, 
                 backgroundColor: isDarkMode ? 'rgba(34,33,45,255)' : 'rgba(245,247,254,255)'

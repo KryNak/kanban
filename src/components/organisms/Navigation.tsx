@@ -1,18 +1,21 @@
 import { ArrowRight, MoreVert } from "@mui/icons-material"
 import { ButtonBase, Dialog, IconButton, Menu, MenuItem, Typography } from "@mui/material"
-import { CSSProperties, Dispatch, ReactElement, SetStateAction, useState } from "react"
+import { CSSProperties, Dispatch, ReactElement, SetStateAction, useEffect, useState } from "react"
 import { AddEditTaskDialog } from "../molecules/AddEditTaskDialog"
 import { colors } from '../../colors'
 import { DialogMode, RemovingDialogType } from "../../enums"
 import { RemovingDialog } from "../molecules/RemovingDialog"
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
+import axios, { AxiosResponse } from "axios"
+import { Board } from "../../dto/DTOs"
 
 export{Navigation}
 
 type NavigationProps = {
     isDarkMode: boolean,
     isSideBarShown: boolean,
-    setSideBarShown: Dispatch<SetStateAction<boolean>>
+    setSideBarShown: Dispatch<SetStateAction<boolean>>,
+    board: Board | null
 }
 
 const styles: {[name: string]: CSSProperties} = {
@@ -48,13 +51,10 @@ const styles: {[name: string]: CSSProperties} = {
     navTitle: {
         fontSize: '20px',
         whiteSpace: 'nowrap'
-    },
-    dialog: {
-        
     }
 }
 
-const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode}: NavigationProps) => {
+const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, board}: NavigationProps) => {
 
     const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState<boolean>(false)
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
@@ -98,6 +98,15 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode}: Navi
         setIsAddTaskDialogOpen(true)
     }
 
+    const handleDeleteBoard = () => {
+        const request = async () => {
+            const response: AxiosResponse = await axios.delete(`http://localhost:8080/api/boards/${board?.id}`)
+            setIsRemovingDialogOpen(false)
+        }
+
+        request().catch(console.error)
+    }
+
     return (<>
         <div style={{
             ...styles.navigation, 
@@ -107,7 +116,7 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode}: Navi
             <ul style={{...styles.navOptions}}>
                 <li style={styles.navTitle}>
                     <Typography sx={{transition: 'color .5s'}} color={isDarkMode ? 'white' : 'black'} fontSize={'20px'}>
-                        Platform Launch
+                        {board?.name}
                     </Typography>
                 </li>
                 <li style={{...styles.endItems}}>
@@ -162,7 +171,7 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode}: Navi
             </ul>
         </div>
         <AddEditTaskDialog dialogMode={DialogMode.Create} isDarkMode={isDarkMode} isOpen={isAddTaskDialogOpen} onClose={handleAddTaskDialogClose}/>
-        <RemovingDialog mode={RemovingDialogType.Board} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleRemovingDialogClose} onCancel={handleRemovingDialogClose} onDelete={() => {}}/>
-        <AddEditBoardDialog dialogMode={DialogMode.Edit} onClose={handleEditBoardDialogClose} isDarkMode={isDarkMode} isOpen={isEditBoardDialogOpen}/>
+        <RemovingDialog mode={RemovingDialogType.Board} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleRemovingDialogClose} onCancel={handleRemovingDialogClose} onDelete={handleDeleteBoard}/>
+        <AddEditBoardDialog board={board} dialogMode={DialogMode.Edit} onClose={handleEditBoardDialogClose} isDarkMode={isDarkMode} isOpen={isEditBoardDialogOpen}/>
     </>)
 }

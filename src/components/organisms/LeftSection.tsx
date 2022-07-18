@@ -6,6 +6,7 @@ import { AppLogoTitle } from "../molecules/AppLogoTitle"
 import { colors } from '../../colors'
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
 import { DialogMode } from "../../enums"
+import { Board } from "../../dto/DTOs"
 export {LeftSection}
 
 const styles: {[name: string]: CSSProperties} = {
@@ -88,15 +89,19 @@ type LeftSectionProp = {
     isSideBarShown: boolean,
     isDarkMode: boolean,
     setDarkMode: Dispatch<SetStateAction<boolean>>,
-    setSideBarShown: Dispatch<SetStateAction<boolean>>
+    setSideBarShown: Dispatch<SetStateAction<boolean>>,
+    boards: Board[],
+    selectedBoard: Board | null,
+    handleSelectBoard: (board: Board) => () => void 
 }
 
-const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, isDarkMode, setDarkMode, setSideBarShown}: LeftSectionProp) => {
+const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, isDarkMode, setDarkMode, setSideBarShown, boards, selectedBoard, handleSelectBoard}: LeftSectionProp) => {
 
-    const boards: string[] = ['Platform Launch', 'Marketing Plan', 'Roadmap']
-
-    const [selectedBoard, setSelectedBoard] = useState<number>(0)
     const [isCreateBoardDialogOpen, setIsCreateBoardDialogOpen] = useState<boolean>(false)
+
+    const isSelected = (id: string): boolean => {
+        return selectedBoard != null && selectedBoard.id === id
+    }
 
     const handleLightModeChange = () => {
         setDarkMode((prev) => !prev)
@@ -120,19 +125,19 @@ const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, i
 
             <div style={styles.boardsAnnounce}>
                 <HeaderTypography>
-                    all boards (8)
+                    all boards ({boards.length})
                 </HeaderTypography>
             </div>
 
             <List sx={{ padding: 0, minHeight: 'max-content' }}>
-                {boards.map((value, index) => {
+                {boards.map((board, index) => {
                     return (
                         <ListItem key={index} sx={{ ...styles.boarderListItem }}>
-                            <ListItemButton onClick={() => setSelectedBoard(index)} sx={{ ...styles.boarderListItemButton, '&.Mui-selected': { backgroundColor: 'rgba(99,95,199,255)', minWidth: '280px' }, '&.Mui-selected:hover': { backgroundColor: 'rgba(99,95,199,255)' } }} selected={index === selectedBoard}>
+                            <ListItemButton onClick={handleSelectBoard(board)} sx={{ ...styles.boarderListItemButton, '&.Mui-selected': { backgroundColor: 'rgba(99,95,199,255)', minWidth: '280px' }, '&.Mui-selected:hover': { backgroundColor: 'rgba(99,95,199,255)' } }} selected={isSelected(board.id)}>
                                 <ListItemIcon>
-                                    <GridView htmlColor={selectedBoard === index ? 'white' : 'rgba(118,122,134,255)'} />
+                                    <GridView htmlColor={isSelected(board.id) ? 'white' : 'rgba(118,122,134,255)'} />
                                 </ListItemIcon>
-                                <ListItemText sx={{ '& > span': { color: selectedBoard === index ? 'white' : 'rgba(118,122,134,255)' } }} primary={`${value}`} />
+                                <ListItemText sx={{ '& > span': { color: isSelected(board.id)  ? 'white' : 'rgba(118,122,134,255)' } }} primary={`${board.name}`} />
                             </ListItemButton>
                         </ListItem>
                     )

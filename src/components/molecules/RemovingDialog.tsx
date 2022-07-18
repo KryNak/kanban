@@ -50,7 +50,7 @@ const RemovingDialog: (props: RemovingDialogProps) => ReactElement = ({isDarkMod
                 }
             </Typography>
             <div style={{display: 'flex', justifyContent: 'space-between', gap: '2em'}}>
-                <ButtonBase sx={{...styles.buttonShared, backgroundColor: '#DC3545'}}>
+                <ButtonBase onClick={onDelete} sx={{...styles.buttonShared, backgroundColor: '#DC3545'}}>
                     <Typography sx={{color: 'white'}} fontSize={14}>Delete</Typography>
                 </ButtonBase>
                 <ButtonBase onClick={onCancel} sx={{...styles.buttonShared, backgroundColor: colors.violet}}>
