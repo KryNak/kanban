@@ -1,8 +1,10 @@
-import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { configureStore } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { Board } from "../dto/DTOs"
+import { isDarkModeReducer } from "./features/isDarkMode/isDarkModeSlice"
+import { isSideBarSliceReducer } from "./features/isSideBarShown/isSideBarShown"
 import { selectedBoardSliceReducer } from "./features/selectedBoard/selectedBoardSlice"
-export { store, useGetBoardsQuery}
+export { store, useGetBoardsQuery, useGetBoardByIdQuery}
 
 const kanbanApi = createApi({
     reducerPath: "kanbanApi",
@@ -10,16 +12,19 @@ const kanbanApi = createApi({
     endpoints: (builder) => ({
         getBoards: builder.query<Board[], void>({
             query: () => "boards"
+        }),
+        getBoardById: builder.query<Board, string>({
+            query: (id) => `boards/${id}`
         })
     })
 })
 
-
-
 const store = configureStore({
     reducer: {
         [kanbanApi.reducerPath]: kanbanApi.reducer,
-        selectedBoard: selectedBoardSliceReducer
+        selectedBoard: selectedBoardSliceReducer,
+        isDarkMode: isDarkModeReducer,
+        isSideBarShown: isSideBarSliceReducer
     },
     middleware: (getDefaultMiddleware) => {
         return getDefaultMiddleware().concat(kanbanApi.middleware)
@@ -29,4 +34,4 @@ const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
-const { useGetBoardsQuery } = kanbanApi
+const { useGetBoardsQuery, useGetBoardByIdQuery } = kanbanApi

@@ -13,8 +13,6 @@ export{Navigation}
 
 type NavigationProps = {
     isDarkMode: boolean,
-    isSideBarShown: boolean,
-    setSideBarShown: Dispatch<SetStateAction<boolean>>,
     board: Board | null
 }
 

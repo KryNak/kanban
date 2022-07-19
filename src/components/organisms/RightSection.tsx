@@ -1,36 +1,23 @@
-import axios from "axios"
-import { CSSProperties, Dispatch, ReactElement, SetStateAction, useEffect, useState } from "react"
+import { skipToken } from "@reduxjs/toolkit/dist/query"
+import { CSSProperties, ReactElement } from "react"
+import { useSelector } from "react-redux"
+import { RootState, useGetBoardByIdQuery } from "../../app/strore"
 import { ProgressColumn } from "../../data"
-import { Board as BoardModel } from "../../dto/DTOs"
 import { Board } from "./Board"
 import { Navigation } from "./Navigation"
 
 export {RightSection}
 
-type RightSectionProps = {
-    isSideBarShown: boolean,
-    isDarkMode: boolean,
-    setSideBarShown: Dispatch<SetStateAction<boolean>>,
-    board: BoardModel | null
-}
-
-const RightSection: (props: RightSectionProps) => ReactElement = ({isSideBarShown, isDarkMode, setSideBarShown, board}: RightSectionProps) => {
+const RightSection: () => ReactElement = () => {
 
     const columns: ProgressColumn[] = ProgressColumn.getMocketProgressColumns()
-    const [boardWithColumns, setBoardWithColumns] = useState<BoardModel | null>(null)
 
-    useEffect(() => {
-        if(!board) {
-            return;
-        }
+    const isDarkMode = useSelector((state: RootState) => state.isDarkMode.value)
+    const isSideBarShown = useSelector((state: RootState) => state.isSideBarShown.value)
+    const board = useSelector((state: RootState) => state.selectedBoard.value)
 
-        const fetch = async () => {
-            const response = await axios.get<BoardModel>(`http://localhost:8080/api/boards/${board?.id}`)
-            setBoardWithColumns(response.data)
-        }
-
-        fetch().catch(console.error)
-    }, [board])
+    const {data, isSuccess} = useGetBoardByIdQuery(board?.id ?? skipToken)
+    const boardWithColumns = isSuccess ? data : null
 
     const styles: {[name: string]: CSSProperties} = {
         rigthSection: {
@@ -53,7 +40,7 @@ const RightSection: (props: RightSectionProps) => ReactElement = ({isSideBarShow
             marginLeft: isSideBarShown ? '300px' : 0, 
             width: isSideBarShown ? 'calc(100% - 300px)' : '100%'
             }}>
-            <Navigation board={boardWithColumns} isDarkMode={isDarkMode} isSideBarShown={isSideBarShown} setSideBarShown={setSideBarShown}/>
+            <Navigation board={boardWithColumns} isDarkMode={isDarkMode}/>
             <div style={{
                 ...styles.content, 
                 backgroundColor: isDarkMode ? 'rgba(34,33,45,255)' : 'rgba(245,247,254,255)'

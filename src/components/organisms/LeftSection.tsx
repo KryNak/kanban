@@ -1,12 +1,17 @@
 import { Add, DarkMode, GridView, LightMode, Visibility, VisibilityOff } from "@mui/icons-material"
 import { ButtonBase, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
-import { CSSProperties, Dispatch, ReactElement, SetStateAction, useState } from "react"
+import { CSSProperties, Dispatch, ReactElement, SetStateAction, useEffect, useState } from "react"
 import { HeaderTypography } from "../atoms/HeaderTypography"
 import { AppLogoTitle } from "../molecules/AppLogoTitle"
 import { colors } from '../../colors'
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
 import { DialogMode } from "../../enums"
 import { Board } from "../../dto/DTOs"
+import { RootState, useGetBoardsQuery } from "../../app/strore"
+import { useDispatch, useSelector } from "react-redux"
+import { hideSideBar, showSideBar } from "../../app/features/isSideBarShown/isSideBarShown"
+import { setSelectedBoard } from "../../app/features/selectedBoard/selectedBoardSlice"
+import { selectDarkMode, selectLightMode } from "../../app/features/isDarkMode/isDarkModeSlice"
 export {LeftSection}
 
 const styles: {[name: string]: CSSProperties} = {
@@ -85,30 +90,48 @@ const styles: {[name: string]: CSSProperties} = {
     }
 }
 
-type LeftSectionProp = {
-    isSideBarShown: boolean,
-    isDarkMode: boolean,
-    setDarkMode: Dispatch<SetStateAction<boolean>>,
-    setSideBarShown: Dispatch<SetStateAction<boolean>>,
-    boards: Board[],
-    selectedBoard: Board | null,
-    handleSelectBoard: (board: Board) => () => void 
-}
 
-const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, isDarkMode, setDarkMode, setSideBarShown, boards, selectedBoard, handleSelectBoard}: LeftSectionProp) => {
+const LeftSection: () => ReactElement = () => {
 
     const [isCreateBoardDialogOpen, setIsCreateBoardDialogOpen] = useState<boolean>(false)
+    const selectedBoard: Board | null = useSelector((state: RootState) => state.selectedBoard.value)
+    const isDarkMode: boolean = useSelector((state: RootState) => state.isDarkMode.value)
+    const isSideBarShown: boolean = useSelector((state: RootState) => state.isSideBarShown.value)
+    const {data, isSuccess} = useGetBoardsQuery()
+
+    const boards: Board[] = isSuccess ? data : []
+
+    useEffect(() => {
+        dispatch(setSelectedBoard(boards.length > 0 ? boards[0] : null))
+    }, [isSuccess])
+
+    const dispatch = useDispatch()
 
     const isSelected = (id: string): boolean => {
         return selectedBoard != null && selectedBoard.id === id
     }
 
     const handleLightModeChange = () => {
-        setDarkMode((prev) => !prev)
+        switch (isDarkMode){
+            case true:
+                dispatch(selectLightMode())
+                break
+            case false:
+                dispatch(selectDarkMode())
+                break
+        }
+    }
+
+    const handleSelectBoard = (board: Board) => () => {
+        dispatch(setSelectedBoard(board))
     }
 
     const handleHideSideMenu = () => {
-        setSideBarShown((prev) => !prev)
+        dispatch(hideSideBar())
+    }
+
+    const handleShowSideMenu = () => {
+        dispatch(showSideBar())
     }
 
     const handleCreateBoardDialogClose = () => {
@@ -172,7 +195,7 @@ const LeftSection: (prop: LeftSectionProp) => ReactElement = ({isSideBarShown, i
             </ButtonBase>
 
         </div>
-        <ButtonBase onClick={() => {setSideBarShown(true)}} sx={styles.visibilityOnButton}>
+        <ButtonBase onClick={handleShowSideMenu} sx={styles.visibilityOnButton}>
             <Visibility htmlColor='white' />
         </ButtonBase>
     </>)
