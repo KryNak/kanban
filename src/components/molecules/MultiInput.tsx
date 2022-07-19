@@ -2,7 +2,6 @@ import { Clear } from "@mui/icons-material"
 import { Typography, List, ListItem, ButtonBase, IconButton } from "@mui/material"
 import { ReactElement, useState } from "react"
 import { colors } from "../../colors"
-import { Column } from "../../dto/DTOs"
 import { KanbanInput } from "../atoms/KanbanInput"
 
 export {MultiInput}
@@ -36,7 +35,7 @@ const MultiInput: (props: MultiInputProps) => ReactElement = ({isDarkMode, label
                     itemsState && itemsState.map((item, index) => {
                         return (
                             <ListItem key={item?.id} sx={{padding: 0, margin: '0 0 0.5em 0', width: '100%'}}>
-                                <KanbanInput value={item?.name} multiline={false} darkMode={isDarkMode}/>
+                                <KanbanInput placeholder="e.g. Todo" value={item?.name} multiline={false} darkMode={isDarkMode}/>
                                 <IconButton onClick={() => {setItemsState(subtasks => subtasks.filter((val, ind) => index !== ind))}} sx={{padding: '5px', transform: 'translateX(10px)'}}>
                                     <Clear htmlColor={colors.headersGrey}/>
                                 </IconButton>
