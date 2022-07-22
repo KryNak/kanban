@@ -9,8 +9,8 @@ const initialSelectBoardState: isDarkModeState = {
     value: true
 }
 
-const selectedBoardSlice = createSlice({
-    name: 'counterSlice',
+const isDarkModeSlice = createSlice({
+    name: 'selectedBoardSlice',
     initialState: initialSelectBoardState,
     reducers: {
         selectDarkMode: (state) => {
@@ -22,5 +22,5 @@ const selectedBoardSlice = createSlice({
     }
 })
 
-const { selectDarkMode, selectLightMode } = selectedBoardSlice.actions
-const isDarkModeReducer = selectedBoardSlice.reducer
+const { selectDarkMode, selectLightMode } = isDarkModeSlice.actions
+const isDarkModeReducer = isDarkModeSlice.reducer

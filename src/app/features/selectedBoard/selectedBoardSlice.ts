@@ -11,7 +11,7 @@ const initialSelectBoardState: SelectedBoardState = {
 }
 
 const selectedBoardSlice = createSlice({
-    name: 'counterSlice',
+    name: 'selectedBoardSlice',
     initialState: initialSelectBoardState,
     reducers: {
         setSelectedBoard: (state, action: PayloadAction<Board | null>) => {

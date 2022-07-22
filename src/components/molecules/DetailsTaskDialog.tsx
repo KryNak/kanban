@@ -6,8 +6,7 @@ import { Task } from "../../data"
 import { SubtasksChecker } from "./SubtasksChecker"
 import { MoreVert } from "@mui/icons-material"
 import { RemovingDialog } from "./RemovingDialog"
-import { DialogMode, RemovingDialogType } from "../../enums"
-import { AddEditBoardDialog } from "./AddEditBoardDialog"
+import { CrudOption, ModelClass } from "../../enums"
 import { AddEditTaskDialog } from "./AddEditTaskDialog"
 
 export {DetailsTaskDialog}
@@ -132,8 +131,8 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
                 <MenuItem onClick={handleEditDialogOpen} sx={{color: isDarkMode ? 'white': 'black'}}>Edit Task</MenuItem>
                 <MenuItem onClick={handleOpenRemovingDialog} sx={{color: '#DC3545'}}>Delete Task</MenuItem>
             </Menu>
-            <RemovingDialog mode={RemovingDialogType.Task} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleCloseRemovingDialog} onCancel={handleCloseRemovingDialog} onDelete={() => {}}/>
-            <AddEditTaskDialog isOpen={isTaskEditDialogOpen} onClose={handleEditDialogClose} dialogMode={DialogMode.Edit} isDarkMode={isDarkMode} />
+            <RemovingDialog mode={ModelClass.Task} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleCloseRemovingDialog} onCancel={handleCloseRemovingDialog} onDelete={() => {}}/>
+            <AddEditTaskDialog isOpen={isTaskEditDialogOpen} onClose={handleEditDialogClose} crudOption={CrudOption.Edit}/>
         </>
     )
 }

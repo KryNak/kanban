@@ -16,12 +16,14 @@ class Board {
 
 class Column {
 
+    id: string
     name: string
     tasks: Task[]
 
-    constructor(name: string, tasks: Task[]){
+    constructor(id: string, name: string, tasks: Task[]){
         this.name = name
         this.tasks = tasks
+        this.id = id
     }
 
 }

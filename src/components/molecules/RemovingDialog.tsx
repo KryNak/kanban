@@ -1,12 +1,12 @@
 import { Dialog, Typography, ButtonBase } from "@mui/material"
 import { CSSProperties, ReactElement } from "react"
-import { RemovingDialogType } from "../../enums"
+import { ModelClass } from "../../enums"
 import { colors } from '../../colors'
 
 export { RemovingDialog }
 
 type RemovingDialogProps = {
-    mode: RemovingDialogType,
+    mode: ModelClass,
     isOpen: boolean,
     onDelete: () => void,
     onClose: () => void,
@@ -37,10 +37,10 @@ const RemovingDialog: (props: RemovingDialogProps) => ReactElement = ({isDarkMod
 
     return (
         <Dialog PaperProps={{style: styles.dialogPaper}} open={isOpen} onClose={onClose}>
-            <Typography color={isDarkMode ? 'white' : 'black'} fontSize={22}>{mode === RemovingDialogType.Board ? 'Delete this board?' : 'Delete this task?'}</Typography>
+            <Typography color={isDarkMode ? 'white' : 'black'} fontSize={22}>{mode === ModelClass.Board ? 'Delete this board?' : 'Delete this task?'}</Typography>
             <Typography fontSize={14} color={colors.headersGrey}>
                 {
-                    mode === RemovingDialogType.Board ? (
+                    mode === ModelClass.Board ? (
                         `Are you sure you want to delete the "Web Design" Board? This action will remove
                         all columns and tasks and cannot be reversed.`
                     ): (

@@ -3,18 +3,14 @@ import { ButtonBase, Dialog, IconButton, Menu, MenuItem, Typography } from "@mui
 import { CSSProperties, Dispatch, ReactElement, SetStateAction, useEffect, useState } from "react"
 import { AddEditTaskDialog } from "../molecules/AddEditTaskDialog"
 import { colors } from '../../colors'
-import { DialogMode, RemovingDialogType } from "../../enums"
+import { CrudOption, ModelClass } from "../../enums"
 import { RemovingDialog } from "../molecules/RemovingDialog"
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
-import axios, { AxiosResponse } from "axios"
-import { Board } from "../../dto/DTOs"
+import { RootState, useDeleteBoardByIdMutation, useGetBoardByIdQuery, useGetBoardsQuery } from "../../app/strore"
+import { useSelector } from "react-redux"
+import { skipToken } from "@reduxjs/toolkit/dist/query"
 
 export{Navigation}
-
-type NavigationProps = {
-    isDarkMode: boolean,
-    board: Board | null
-}
 
 const styles: {[name: string]: CSSProperties} = {
     navigation: {
@@ -52,12 +48,19 @@ const styles: {[name: string]: CSSProperties} = {
     }
 }
 
-const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, board}: NavigationProps) => {
+const Navigation: () => ReactElement = () => {
 
     const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState<boolean>(false)
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
     const [isRemovingDialogOpen, setIsRemovingDialogOpen] = useState<boolean>(false)
     const [isEditBoardDialogOpen, setIsEditBoardDialogOpen] = useState<boolean>(false)
+
+    const selectedBoardId = useSelector((state: RootState) => state.selectedBoardId.value)
+    const isDarkMode = useSelector((state: RootState) => state.isDarkMode.value)
+    const [deleteBoardById] = useDeleteBoardByIdMutation()
+
+    const {data, isSuccess} = useGetBoardByIdQuery(selectedBoardId ?? skipToken)
+    const board = isSuccess ? data : null
 
     const isMenuOpen = Boolean(anchorEl)
 
@@ -97,12 +100,10 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, board
     }
 
     const handleDeleteBoard = () => {
-        const request = async () => {
-            const response: AxiosResponse = await axios.delete(`http://localhost:8080/api/boards/${board?.id}`)
-            setIsRemovingDialogOpen(false)
+        if(selectedBoardId) {
+            deleteBoardById(selectedBoardId)
         }
-
-        request().catch(console.error)
+        setIsRemovingDialogOpen(false)
     }
 
     return (<>
@@ -168,8 +169,8 @@ const Navigation: (props: NavigationProps) => ReactElement = ({isDarkMode, board
                 </li>
             </ul>
         </div>
-        <AddEditTaskDialog dialogMode={DialogMode.Create} isDarkMode={isDarkMode} isOpen={isAddTaskDialogOpen} onClose={handleAddTaskDialogClose}/>
-        <RemovingDialog mode={RemovingDialogType.Board} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleRemovingDialogClose} onCancel={handleRemovingDialogClose} onDelete={handleDeleteBoard}/>
-        <AddEditBoardDialog board={board} dialogMode={DialogMode.Edit} onClose={handleEditBoardDialogClose} isDarkMode={isDarkMode} isOpen={isEditBoardDialogOpen}/>
+        <AddEditTaskDialog crudOption={CrudOption.Create} isOpen={isAddTaskDialogOpen} onClose={handleAddTaskDialogClose}/>
+        <RemovingDialog mode={ModelClass.Board} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleRemovingDialogClose} onCancel={handleRemovingDialogClose} onDelete={handleDeleteBoard}/>
+        <AddEditBoardDialog board={board} crudOption={CrudOption.Edit} onClose={handleEditBoardDialogClose} isDarkMode={isDarkMode} isOpen={isEditBoardDialogOpen}/>
     </>)
 }

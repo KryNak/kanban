@@ -1,6 +1,6 @@
 import { DarkMode } from "@mui/icons-material"
 import { TextField, Typography } from "@mui/material"
-import { CSSProperties, ReactElement } from "react"
+import { ChangeEventHandler, CSSProperties, HtmlHTMLAttributes, ReactElement } from "react"
 import { colors } from "../../colors"
 export {KanbanInput}
 
@@ -10,11 +10,14 @@ type KanbanInputProps = {
     darkMode: boolean,
     rows?: number,
     multiline: boolean,
-    value?: string
-
+    value?: string,
+    onChange?: ChangeEventHandler<any>
+    
+    error?: boolean,
+    helperText?: string | false
 }
 
-const KanbanInput: (props: KanbanInputProps) => ReactElement = ({placeholder, label, darkMode, rows, multiline, value}: KanbanInputProps) => {
+const KanbanInput: (props: KanbanInputProps) => ReactElement = ({placeholder, label, darkMode, rows, multiline, value, onChange, error, helperText}: KanbanInputProps) => {
 
     const textFieldStyle = {
         '& fieldset': {
@@ -40,7 +43,7 @@ const KanbanInput: (props: KanbanInputProps) => ReactElement = ({placeholder, la
                 label &&
                 <Typography sx={{marginBottom: '0.5em'}} fontSize={14} color={darkMode ? 'white': 'black'}>{label}</Typography>
             }
-            <TextField autoComplete="off" value={value} rows={rows ? rows : 1} multiline={multiline} placeholder={placeholder} sx={textFieldStyle} fullWidth={true}></TextField>
+            <TextField helperText={helperText} error={error} onChange={onChange} autoComplete="off" value={value} rows={rows ? rows : 1} multiline={multiline} placeholder={placeholder} sx={textFieldStyle} fullWidth={true}></TextField>
         </div>
     )
 }

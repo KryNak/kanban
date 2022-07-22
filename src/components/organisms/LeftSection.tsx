@@ -1,17 +1,17 @@
 import { Add, DarkMode, GridView, LightMode, Visibility, VisibilityOff } from "@mui/icons-material"
 import { ButtonBase, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
-import { CSSProperties, Dispatch, ReactElement, SetStateAction, useEffect, useState } from "react"
+import { CSSProperties, ReactElement, useEffect, useState } from "react"
 import { HeaderTypography } from "../atoms/HeaderTypography"
 import { AppLogoTitle } from "../molecules/AppLogoTitle"
 import { colors } from '../../colors'
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
-import { DialogMode } from "../../enums"
+import { CrudOption } from "../../enums"
 import { Board } from "../../dto/DTOs"
 import { RootState, useGetBoardsQuery } from "../../app/strore"
 import { useDispatch, useSelector } from "react-redux"
 import { hideSideBar, showSideBar } from "../../app/features/isSideBarShown/isSideBarShown"
-import { setSelectedBoard } from "../../app/features/selectedBoard/selectedBoardSlice"
 import { selectDarkMode, selectLightMode } from "../../app/features/isDarkMode/isDarkModeSlice"
+import { setSelectedBoardId } from "../../app/features/selectedBoardId/selectedBoardId"
 export {LeftSection}
 
 const styles: {[name: string]: CSSProperties} = {
@@ -94,7 +94,7 @@ const styles: {[name: string]: CSSProperties} = {
 const LeftSection: () => ReactElement = () => {
 
     const [isCreateBoardDialogOpen, setIsCreateBoardDialogOpen] = useState<boolean>(false)
-    const selectedBoard: Board | null = useSelector((state: RootState) => state.selectedBoard.value)
+    const selectedBoardId: string | null = useSelector((state: RootState) => state.selectedBoardId.value)
     const isDarkMode: boolean = useSelector((state: RootState) => state.isDarkMode.value)
     const isSideBarShown: boolean = useSelector((state: RootState) => state.isSideBarShown.value)
     const {data, isSuccess} = useGetBoardsQuery()
@@ -102,13 +102,13 @@ const LeftSection: () => ReactElement = () => {
     const boards: Board[] = isSuccess ? data : []
 
     useEffect(() => {
-        dispatch(setSelectedBoard(boards.length > 0 ? boards[0] : null))
+        dispatch(setSelectedBoardId(boards.length > 0 ? boards[0].id : null))
     }, [isSuccess])
 
     const dispatch = useDispatch()
 
     const isSelected = (id: string): boolean => {
-        return selectedBoard != null && selectedBoard.id === id
+        return selectedBoardId != null && selectedBoardId === id
     }
 
     const handleLightModeChange = () => {
@@ -122,8 +122,8 @@ const LeftSection: () => ReactElement = () => {
         }
     }
 
-    const handleSelectBoard = (board: Board) => () => {
-        dispatch(setSelectedBoard(board))
+    const handleSelectBoard = (id: string) => () => {
+        dispatch(setSelectedBoardId(id))
     }
 
     const handleHideSideMenu = () => {
@@ -156,7 +156,7 @@ const LeftSection: () => ReactElement = () => {
                 {boards.map((board, index) => {
                     return (
                         <ListItem key={index} sx={{ ...styles.boarderListItem }}>
-                            <ListItemButton onClick={handleSelectBoard(board)} sx={{ ...styles.boarderListItemButton, '&.Mui-selected': { backgroundColor: 'rgba(99,95,199,255)', minWidth: '280px' }, '&.Mui-selected:hover': { backgroundColor: 'rgba(99,95,199,255)' } }} selected={isSelected(board.id)}>
+                            <ListItemButton onClick={handleSelectBoard(board.id)} sx={{ ...styles.boarderListItemButton, '&.Mui-selected': { backgroundColor: 'rgba(99,95,199,255)', minWidth: '280px' }, '&.Mui-selected:hover': { backgroundColor: 'rgba(99,95,199,255)' } }} selected={isSelected(board.id)}>
                                 <ListItemIcon>
                                     <GridView htmlColor={isSelected(board.id) ? 'white' : 'rgba(118,122,134,255)'} />
                                 </ListItemIcon>
@@ -175,7 +175,7 @@ const LeftSection: () => ReactElement = () => {
                     Create New Board
                 </Typography>
             </ButtonBase>
-            <AddEditBoardDialog dialogMode={DialogMode.Create} isOpen={isCreateBoardDialogOpen} isDarkMode={isDarkMode} onClose={handleCreateBoardDialogClose}/>
+            <AddEditBoardDialog crudOption={CrudOption.Create} isOpen={isCreateBoardDialogOpen} isDarkMode={isDarkMode} onClose={handleCreateBoardDialogClose}/>
 
             <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)' }}>
                 <LightMode htmlColor='rgba(118,122,134,255)' />

@@ -1,9 +1,9 @@
-export {RemovingDialogType, DialogMode}
+export {ModelClass, CrudOption}
 
-enum RemovingDialogType {
+enum ModelClass {
     Board, Task
 }
 
-enum DialogMode {
+enum CrudOption {
     Edit, Create
 }

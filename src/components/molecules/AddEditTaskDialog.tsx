@@ -1,7 +1,9 @@
 import { ButtonBase, Dialog, Typography } from "@mui/material"
 import { CSSProperties } from "react"
+import { useSelector } from "react-redux"
+import { RootState } from "../../app/strore"
 import { colors } from "../../colors"
-import { DialogMode } from "../../enums"
+import { CrudOption, ModelClass } from "../../enums"
 import { KanbanInput } from "../atoms/KanbanInput"
 import { KanbanSelect } from "../atoms/KanbanSelect"
 import { MultiInput } from "./MultiInput"
@@ -10,11 +12,12 @@ export {AddEditTaskDialog}
 type AddEditTaskDialogProps = {
     onClose: () => void,
     isOpen: boolean,
-    isDarkMode: boolean,
-    dialogMode: DialogMode
+    crudOption: CrudOption
 }
 
-const AddEditTaskDialog = ({isOpen, onClose, isDarkMode, dialogMode}: AddEditTaskDialogProps) => {
+const AddEditTaskDialog = ({isOpen, onClose, crudOption}: AddEditTaskDialogProps) => {
+
+    const isDarkMode = useSelector((state: RootState) => state.isDarkMode.value)
 
     const styles: {[name: string]: CSSProperties} = {
         createNewButton: {
@@ -35,12 +38,12 @@ const AddEditTaskDialog = ({isOpen, onClose, isDarkMode, dialogMode}: AddEditTas
 
     return (
         <Dialog PaperProps={{style: styles.dialogPaper}} onClose={onClose} open={isOpen}>
-            <Typography color={isDarkMode ? 'white' : 'black'} fontSize={22}>{dialogMode === DialogMode.Create ? 'Add New Task' : 'Edit Task'}</Typography>
+            <Typography color={isDarkMode ? 'white' : 'black'} fontSize={22}>{crudOption === CrudOption.Create ? 'Add New Task' : 'Edit Task'}</Typography>
             <KanbanInput multiline={false} label="Title" placeholder="e.g. Take coffee break" darkMode={isDarkMode}/>
             <KanbanInput multiline={true} rows={5} label="Description" placeholder="e.g. It's always good to take a break. This 15 minute break will recharge the batteries a little." darkMode={isDarkMode}/>
-            <MultiInput addButtonLabel="+ Add New Subtasks" label="Subtasks" isDarkMode={isDarkMode}/>
+            <MultiInput modelClass={ModelClass.Task} addButtonLabel="+ Add New Subtasks" label="Subtasks"/>
             <KanbanSelect isDarkMode={isDarkMode}/>
-            <ButtonBase sx={styles.createNewButton}>{dialogMode === DialogMode.Create ? 'Create New Task' : 'Update Task'}</ButtonBase>
+            <ButtonBase sx={styles.createNewButton}>{crudOption === CrudOption.Create ? 'Create New Task' : 'Update Task'}</ButtonBase>
         </Dialog>
     )
 }

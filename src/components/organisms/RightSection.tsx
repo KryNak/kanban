@@ -1,6 +1,7 @@
 import { skipToken } from "@reduxjs/toolkit/dist/query"
-import { CSSProperties, ReactElement } from "react"
-import { useSelector } from "react-redux"
+import { CSSProperties, ReactElement, useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { setSelectedBoard } from "../../app/features/selectedBoard/selectedBoardSlice"
 import { RootState, useGetBoardByIdQuery } from "../../app/strore"
 import { ProgressColumn } from "../../data"
 import { Board } from "./Board"
@@ -14,10 +15,6 @@ const RightSection: () => ReactElement = () => {
 
     const isDarkMode = useSelector((state: RootState) => state.isDarkMode.value)
     const isSideBarShown = useSelector((state: RootState) => state.isSideBarShown.value)
-    const board = useSelector((state: RootState) => state.selectedBoard.value)
-
-    const {data, isSuccess} = useGetBoardByIdQuery(board?.id ?? skipToken)
-    const boardWithColumns = isSuccess ? data : null
 
     const styles: {[name: string]: CSSProperties} = {
         rigthSection: {
@@ -40,7 +37,7 @@ const RightSection: () => ReactElement = () => {
             marginLeft: isSideBarShown ? '300px' : 0, 
             width: isSideBarShown ? 'calc(100% - 300px)' : '100%'
             }}>
-            <Navigation board={boardWithColumns} isDarkMode={isDarkMode}/>
+            <Navigation/>
             <div style={{
                 ...styles.content, 
                 backgroundColor: isDarkMode ? 'rgba(34,33,45,255)' : 'rgba(245,247,254,255)'

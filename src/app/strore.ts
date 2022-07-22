@@ -1,20 +1,44 @@
 import { configureStore } from "@reduxjs/toolkit"
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import { createApi, fetchBaseQuery, setupListeners } from "@reduxjs/toolkit/query/react"
 import { Board } from "../dto/DTOs"
 import { isDarkModeReducer } from "./features/isDarkMode/isDarkModeSlice"
 import { isSideBarSliceReducer } from "./features/isSideBarShown/isSideBarShown"
 import { selectedBoardSliceReducer } from "./features/selectedBoard/selectedBoardSlice"
-export { store, useGetBoardsQuery, useGetBoardByIdQuery}
+import { selectedBoardIdSliceReducer } from "./features/selectedBoardId/selectedBoardId"
+export { store }
 
 const kanbanApi = createApi({
     reducerPath: "kanbanApi",
     baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8080/api" }),
+    tagTypes: ["Boards"],
     endpoints: (builder) => ({
         getBoards: builder.query<Board[], void>({
-            query: () => "boards"
+            query: () => "boards",
+            providesTags: ['Boards']
         }),
         getBoardById: builder.query<Board, string>({
             query: (id) => `boards/${id}`
+        }),
+        deleteBoardById: builder.mutation<void, string>({
+            query: (id) => ({
+                url: `boards/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: ["Boards"]
+        }),
+        updateBoardById: builder.mutation<Board, Board>({
+            query: (board) => ({
+                url: `boards/${board.id}`,
+                method: 'PUT',
+                body: board
+            })
+        }),
+        createBoard: builder.mutation<Board, Board>({
+            query: (board) => ({
+                url: 'boards',
+                method: 'POST',
+                body: board
+            })
         })
     })
 })
@@ -24,14 +48,17 @@ const store = configureStore({
         [kanbanApi.reducerPath]: kanbanApi.reducer,
         selectedBoard: selectedBoardSliceReducer,
         isDarkMode: isDarkModeReducer,
-        isSideBarShown: isSideBarSliceReducer
+        isSideBarShown: isSideBarSliceReducer,
+        selectedBoardId: selectedBoardIdSliceReducer
     },
     middleware: (getDefaultMiddleware) => {
         return getDefaultMiddleware().concat(kanbanApi.middleware)
     }
 })
 
+setupListeners(store.dispatch)
+
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
-const { useGetBoardsQuery, useGetBoardByIdQuery } = kanbanApi
+export const { useGetBoardsQuery, useGetBoardByIdQuery, useDeleteBoardByIdMutation } = kanbanApi

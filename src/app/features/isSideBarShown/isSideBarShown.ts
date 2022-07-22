@@ -10,7 +10,7 @@ const initialIsSideBarShown: isSideBarShownState = {
 }
 
 const isSideBarShownSlice = createSlice({
-    name: 'isSideBarShown',
+    name: 'isSideBarShownSlice',
     initialState: initialIsSideBarShown,
     reducers: {
         hideSideBar: (state) => {
