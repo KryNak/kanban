@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery, setupListeners } from "@reduxjs/toolkit/query/react"
-import { Board } from "../dto/DTOs"
+import { Board, CreateBoardRequestDto } from "../dto/DTOs"
 import { isDarkModeReducer } from "./features/isDarkMode/isDarkModeSlice"
 import { isSideBarSliceReducer } from "./features/isSideBarShown/isSideBarShown"
 import { selectedBoardSliceReducer } from "./features/selectedBoard/selectedBoardSlice"
@@ -33,12 +33,16 @@ const kanbanApi = createApi({
                 body: board
             })
         }),
-        createBoard: builder.mutation<Board, Board>({
+        createBoard: builder.mutation<void, CreateBoardRequestDto>({
             query: (board) => ({
                 url: 'boards',
                 method: 'POST',
-                body: board
-            })
+                body: JSON.stringify(board),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            }),
+            invalidatesTags: ["Boards"]
         })
     })
 })
@@ -61,4 +65,4 @@ setupListeners(store.dispatch)
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
-export const { useGetBoardsQuery, useGetBoardByIdQuery, useDeleteBoardByIdMutation } = kanbanApi
+export const { useGetBoardsQuery, useGetBoardByIdQuery, useDeleteBoardByIdMutation, useCreateBoardMutation } = kanbanApi

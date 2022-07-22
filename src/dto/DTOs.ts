@@ -1,4 +1,4 @@
-export { Board, Column, Task, Subtask }
+export { Board, Column, Task, Subtask, CreateBoardRequestDto, ColumnDto }
 
 class Board {
 
@@ -56,6 +56,28 @@ class Subtask {
         this.id = id
         this.isCompleted = isCompleted
         this.title = title
+    }
+
+}
+
+class ColumnDto {
+
+    name: string
+
+    constructor(name: string) {
+        this.name = name
+    }
+
+}
+
+class CreateBoardRequestDto {
+
+    name: string
+    columns: ColumnDto[]
+
+    constructor(name: string, columns: ColumnDto[]) {
+        this.name = name
+        this.columns = columns
     }
 
 }

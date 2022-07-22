@@ -12,12 +12,12 @@ type KanbanInputProps = {
     multiline: boolean,
     value?: string,
     onChange?: ChangeEventHandler<any>
-    
     error?: boolean,
-    helperText?: string | false
+    helperText?: string | false,
+    props?: {[name: string]: any}
 }
 
-const KanbanInput: (props: KanbanInputProps) => ReactElement = ({placeholder, label, darkMode, rows, multiline, value, onChange, error, helperText}: KanbanInputProps) => {
+const KanbanInput: (props: KanbanInputProps) => ReactElement = ({placeholder, label, darkMode, rows, multiline, value, onChange, error, helperText, props}: KanbanInputProps) => {
 
     const textFieldStyle = {
         '& fieldset': {
@@ -30,6 +30,9 @@ const KanbanInput: (props: KanbanInputProps) => ReactElement = ({placeholder, la
             },
             "&.Mui-focused fieldset": {
                borderColor: colors.headersGrey
+            },
+            "&.Mui-error fieldset": {
+                borderColor: 'red'
             }
         },
         '& .MuiInputBase-input': {
@@ -43,7 +46,7 @@ const KanbanInput: (props: KanbanInputProps) => ReactElement = ({placeholder, la
                 label &&
                 <Typography sx={{marginBottom: '0.5em'}} fontSize={14} color={darkMode ? 'white': 'black'}>{label}</Typography>
             }
-            <TextField helperText={helperText} error={error} onChange={onChange} autoComplete="off" value={value} rows={rows ? rows : 1} multiline={multiline} placeholder={placeholder} sx={textFieldStyle} fullWidth={true}></TextField>
+            <TextField helperText={helperText} error={error} onChange={onChange} autoComplete="off" value={value} rows={rows ? rows : 1} multiline={multiline} placeholder={placeholder} sx={textFieldStyle} fullWidth={true} {...props}></TextField>
         </div>
     )
 }
