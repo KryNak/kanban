@@ -4,21 +4,21 @@ import { KanbanInput } from "../atoms/KanbanInput"
 import { MultiInput } from "./MultiInput"
 import { colors } from '../../colors'
 import { CrudOption, ModelClass } from "../../enums"
-import { Board, Column, ColumnDto, CreateBoardRequestDto, Task } from "../../dto/DTOs"
+import { Board, Column, ColumnDto, CreateBoardRequestDto, Task, UpdateBoardRequestDto } from "../../dto/DTOs"
 import { useForm, useFieldArray, FieldValues } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as Yup from 'yup';
 import { Clear } from "@mui/icons-material"
-import { useCreateBoardMutation } from "../../app/strore"
+import { RootState, UpdateBoardType, useCreateBoardMutation, useGetBoardByIdQuery, useUpdateBoardByIdMutation } from "../../app/strore"
+import { useSelector } from "react-redux"
+import { skipToken } from "@reduxjs/toolkit/dist/query"
 
 export { AddEditBoardDialog }
 
 type AddEditBoardDialogProps = {
-    isDarkMode: boolean,
     isOpen: boolean,
     onClose: () => void,
-    crudOption: CrudOption,
-    board?: Board | null
+    crudOption: CrudOption
 }
 
 type FormProps = {
@@ -26,7 +26,14 @@ type FormProps = {
     columns: Column[]
 }
 
-const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({isDarkMode, onClose, isOpen, crudOption, board}: AddEditBoardDialogProps) => {
+const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({onClose, isOpen, crudOption}: AddEditBoardDialogProps) => {
+
+    const isDarkMode = useSelector((state: RootState) => state.isDarkMode.value)
+    const selectedBoardId = useSelector((state: RootState) => state.selectedBoardId.value)
+
+    const {data: selectedBoard, isSuccess} = useGetBoardByIdQuery(selectedBoardId ?? skipToken)
+    const [createBoard] = useCreateBoardMutation()
+    const [updateBoard] = useUpdateBoardByIdMutation()
 
     const styles: {[name: string]: CSSProperties} = {
         dialogPaper: {
@@ -55,8 +62,6 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({i
         }
     }
 
-    const [createBoard] = useCreateBoardMutation()
-
     const validationSchema = Yup.object({
         boardName: Yup
             .string()
@@ -79,7 +84,7 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({i
         handleSubmit,
         formState: { errors },
         reset,
-
+        setValue
     } = useForm<FormProps>({
         resolver: yupResolver(validationSchema),
         defaultValues: {
@@ -88,20 +93,47 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({i
         }
     })
 
+    useEffect(() => {
+        if(crudOption === CrudOption.Edit && isOpen) {
+            setValue('boardName', selectedBoard?.name ?? '')
+            setValue('columns', selectedBoard?.columns ?? [])
+        }
+    }, [isOpen, reset])
+
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'columns'
     });
 
+    const hanldeClose = () => {
+        onClose()
+        reset()
+    }
+
+    const handleAppendColumn = () => {
+        append(new Column('', '', []))
+    }
+
+    const handleRemoveColumn = (index: number) => () => {
+        remove(index)
+    }
+
     const onSubmit = (data: FormProps) => {
-        if(crudOption == CrudOption.Create) {
+        if(crudOption === CrudOption.Create) {
             createBoard(new CreateBoardRequestDto(data.boardName, data.columns.map(e => new ColumnDto(e.name))))
         }
+        else if(crudOption === CrudOption.Edit && selectedBoardId) {
+            console.log(data.columns)
+
+            updateBoard({id: selectedBoardId, body: new UpdateBoardRequestDto(selectedBoardId, data.boardName, data.columns)} as UpdateBoardType)
+        }
+
+        onClose()
+        reset()
     };
 
-    return (
-        
-        <Dialog PaperProps={{style: styles.dialogPaper}} onClose={() => {onClose(); reset()}} open={isOpen}>
+    const content = (
+        <Dialog PaperProps={{style: styles.dialogPaper}} onClose={hanldeClose} open={isOpen}>
             <form style={styles.formStyle}>
                 <Typography color={isDarkMode ? 'white' : 'black'} fontSize={22}>{crudOption === CrudOption.Create ? 'Add New Board' : 'Edit Board'}</Typography>
                 <KanbanInput 
@@ -127,18 +159,23 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({i
                                         multiline={false} 
                                         darkMode={isDarkMode}
                                     />
-                                    <IconButton onClick={() => {remove(index)}} sx={{padding: '5px', transform: `translateX(10px) translateY(${errors.columns?.[index]?.name ? '-10px': '0px'})`}}>
+                                    <IconButton onClick={handleRemoveColumn(index)} sx={{padding: '5px', transform: `translateX(10px) translateY(${errors.columns?.[index]?.name ? '-10px': '0px'})`}}>
                                         <Clear htmlColor={colors.headersGrey}/>
                                     </IconButton>
                                 </ListItem>
                             )
                         })}
                     </List>
-                    <ButtonBase onClick={() => {append(new Column('', '', []))}} sx={styles.addSubtaskButton}>+ Add New Column</ButtonBase>
+                    <ButtonBase onClick={handleAppendColumn} sx={styles.addSubtaskButton}>+ Add New Column</ButtonBase>
                 </div>
                 <ButtonBase onClick={handleSubmit(onSubmit)} sx={styles.dialogButton}>{crudOption === CrudOption.Create ? 'Create New Board' : 'Update Board'}</ButtonBase>
             </form>
         </Dialog>
+    )
+
+    return (
+        
+        isSuccess ? content : <div/>
         
     )
 }

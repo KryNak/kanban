@@ -1,6 +1,6 @@
 import { Typography, List, ListItem, Checkbox} from "@mui/material"
 import { CSSProperties, ReactElement, useEffect, useState } from "react"
-import { Subtask, Task } from "../../data"
+import { Subtask, Task } from "../../dto/DTOs"
 import { colors } from '../../colors'
 export { SubtasksChecker }
 
@@ -32,7 +32,7 @@ const SubtasksChecker: (props: SubtasksCheckerProps) => ReactElement = ({task, i
         setSubtasks((prevSubtasks) => [...prevSubtasks].map((subtask, index2) => {
             if(index === index2) {
                 const subtask2 = {...subtask}
-                subtask2.checked = !subtask.checked
+                subtask2.isCompleted = !subtask.isCompleted
                 return subtask2
             }
             else {
@@ -43,7 +43,7 @@ const SubtasksChecker: (props: SubtasksCheckerProps) => ReactElement = ({task, i
 
     return (
         <div>
-            <Typography sx={{marginBottom: '0.5em'}} fontSize={14} color={isDarkMode ? 'white': 'black'}>Subtasks ({subtasks.filter(e => e.checked === true).length} of {subtasks.length})</Typography>
+            <Typography sx={{marginBottom: '0.5em'}} fontSize={14} color={isDarkMode ? 'white': 'black'}>Subtasks ({subtasks.filter(e => e.isCompleted === true).length} of {subtasks.length})</Typography>
             <List sx={{margin: '0', padding: 0, width: '100%'}}>
                 {
                     subtasks && subtasks.map((subtask, index) => {
@@ -51,7 +51,7 @@ const SubtasksChecker: (props: SubtasksCheckerProps) => ReactElement = ({task, i
                             <ListItem key={index} sx={{padding: 0, margin: '0 0 0.5em 0', width: '100%'}}>
                                 <div style={styles.checkbox}>
                                     <Checkbox onChange={() => handleCheck(index)} sx={{padding: '5px', color: colors.headersGrey, "&.Mui-checked": {'color': colors.violet}}}/>
-                                    <Typography sx={{alignSelf: 'center', textDecoration: subtask.checked ?'line-through' : 'none'}} fontSize={14} color={subtask.checked ? colors.headersGrey : isDarkMode ? 'white' : 'black'}>{subtask.description}</Typography>
+                                    <Typography sx={{alignSelf: 'center', textDecoration: subtask.isCompleted ?'line-through' : 'none'}} fontSize={14} color={subtask.isCompleted ? colors.headersGrey : isDarkMode ? 'white' : 'black'}>{subtask.title}</Typography>
                                 </div>
                             </ListItem>
                         )

@@ -1,4 +1,4 @@
-export { Board, Column, Task, Subtask, CreateBoardRequestDto, ColumnDto }
+export { Board, Column, Task, Subtask, CreateBoardRequestDto, ColumnDto, UpdateBoardRequestDto }
 
 class Board {
 
@@ -76,6 +76,20 @@ class CreateBoardRequestDto {
     columns: ColumnDto[]
 
     constructor(name: string, columns: ColumnDto[]) {
+        this.name = name
+        this.columns = columns
+    }
+
+}
+
+class UpdateBoardRequestDto {
+
+    id: string
+    name: string
+    columns: Column[]
+
+    constructor(id: string, name: string, columns: Column[]) {
+        this.id = id
         this.name = name
         this.columns = columns
     }

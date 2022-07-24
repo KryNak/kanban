@@ -1,11 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery, setupListeners } from "@reduxjs/toolkit/query/react"
-import { Board, CreateBoardRequestDto } from "../dto/DTOs"
+import { Board, Column, CreateBoardRequestDto, UpdateBoardRequestDto } from "../dto/DTOs"
 import { isDarkModeReducer } from "./features/isDarkMode/isDarkModeSlice"
 import { isSideBarSliceReducer } from "./features/isSideBarShown/isSideBarShown"
 import { selectedBoardSliceReducer } from "./features/selectedBoard/selectedBoardSlice"
 import { selectedBoardIdSliceReducer } from "./features/selectedBoardId/selectedBoardId"
 export { store }
+
+export type UpdateBoardType = {
+    id: string, 
+    body: UpdateBoardRequestDto
+}
 
 const kanbanApi = createApi({
     reducerPath: "kanbanApi",
@@ -26,11 +31,14 @@ const kanbanApi = createApi({
             }),
             invalidatesTags: ["Boards"]
         }),
-        updateBoardById: builder.mutation<Board, Board>({
+        updateBoardById: builder.mutation<Board, UpdateBoardType>({
             query: (board) => ({
                 url: `boards/${board.id}`,
                 method: 'PUT',
-                body: board
+                body: JSON.stringify(board.body),
+                headers: {
+                    'content-type': 'application/json'
+                }
             })
         }),
         createBoard: builder.mutation<void, CreateBoardRequestDto>({
@@ -43,6 +51,9 @@ const kanbanApi = createApi({
                 }
             }),
             invalidatesTags: ["Boards"]
+        }),
+        getColumnById: builder.query<Column, string>({
+            query: (id) => `columns/${id}`
         })
     })
 })
@@ -65,4 +76,11 @@ setupListeners(store.dispatch)
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
-export const { useGetBoardsQuery, useGetBoardByIdQuery, useDeleteBoardByIdMutation, useCreateBoardMutation } = kanbanApi
+export const { 
+    useGetBoardsQuery, 
+    useGetBoardByIdQuery, 
+    useDeleteBoardByIdMutation, 
+    useCreateBoardMutation, 
+    useGetColumnByIdQuery,
+    useUpdateBoardByIdMutation
+} = kanbanApi

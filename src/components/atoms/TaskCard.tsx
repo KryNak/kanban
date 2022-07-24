@@ -1,7 +1,7 @@
 import { ButtonBase, Typography } from "@mui/material"
 import React, { ReactElement, useState } from "react"
 import { DetailsTaskDialog } from "../molecules/DetailsTaskDialog"
-import { Task } from './../../data'
+import { Task } from './../../dto/DTOs'
 export {TodoCard}
 
 const styles: {[name: string]: React.CSSProperties} = {
@@ -38,10 +38,10 @@ const TodoCard = ({task, darkMode}: TodoCardProps): ReactElement => {
             <ButtonBase onClick={handleOnClick} sx={{borderRadius: '5px'}}>
                 <div style={{...styles.todoCard, backgroundColor: darkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)'}}>
                     <Typography sx={{transition: 'color .5s', textAlign: 'start'}} fontSize='14px' color={darkMode ? 'white' : 'black'}>
-                        {task.name}
+                        {task.title}
                     </Typography>
                     <Typography sx={{textAlign: 'start'}} fontSize='12px' color={'rgba(118,122,134,255)'}>
-                        {task.subtasks.filter(e => e.checked === true).length} of {task.subtasks.length} substasks
+                        {task.subtasks.filter(e => e.isCompleted === true).length} of {task.subtasks.length} substasks
                     </Typography>
                 </div>
             </ButtonBase>

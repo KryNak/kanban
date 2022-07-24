@@ -2,7 +2,7 @@ import { Dialog, Typography, ButtonBase, IconButton, MenuItem, Menu } from "@mui
 import { CSSProperties, ReactElement, useState } from "react"
 import { KanbanSelect } from "../atoms/KanbanSelect"
 import { colors } from '../../colors'
-import { Task } from "../../data"
+import { Task } from "../../dto/DTOs"
 import { SubtasksChecker } from "./SubtasksChecker"
 import { MoreVert } from "@mui/icons-material"
 import { RemovingDialog } from "./RemovingDialog"
@@ -83,7 +83,7 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
         <>
             <Dialog PaperProps={{style: styles.dialogPaper}} onClose={handleClose} open={isOpen}>
                 <div style={styles.titleSection}>
-                    <Typography sx={{flexGrow: '1'}} color={isDarkMode ? 'white' : 'black'} fontSize={22}>{task.name}</Typography>
+                    <Typography sx={{flexGrow: '1'}} color={isDarkMode ? 'white' : 'black'} fontSize={22}>{task.title}</Typography>
                     <IconButton onClick={handleMenuClick} sx={{alignSelf: 'flex-start', transform: 'translateX(16px)'}}>
                         <MoreVert htmlColor={colors.headersGrey}/>
                     </IconButton>

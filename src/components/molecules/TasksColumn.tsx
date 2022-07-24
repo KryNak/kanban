@@ -1,29 +1,29 @@
 import React from 'react'
-import {ProgressColumn, Task} from '../../data'
+import { Task } from '../../dto/DTOs'
 import { ColumnHeader } from './TasksColumnHeader'
 import { TodoCardList } from './TaskCardList'
-export {BoardColumn}
+export { BoardColumn }
 
 type BoardColumnProps = {
-    darkMode: boolean,
     name: string,
-    tasks: Task[],
     color: string,
-    style?: React.CSSProperties
+    style?: React.CSSProperties,
+    columnId: string
 }
 
-function BoardColumn({name, tasks, darkMode, color, style}: BoardColumnProps): React.ReactElement {
+function BoardColumn({name, columnId, color, style}: BoardColumnProps): React.ReactElement {
 
     const styles: {[name: string]: React.CSSProperties} = {
         column: {
-            paddingBottom: '50px'
+            paddingBottom: '50px',
+            minWidth: '370px'
         }
     }
 
     return (
         <div style={{...styles.column, ...style}}>
             <ColumnHeader color={color}>{name}</ColumnHeader>
-            <TodoCardList darkMode={darkMode} tasks={tasks}></TodoCardList>
+            <TodoCardList columnId={columnId}/>
         </div>
     )
 }

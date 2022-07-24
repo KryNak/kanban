@@ -1,17 +1,12 @@
-import { skipToken } from "@reduxjs/toolkit/dist/query"
-import { CSSProperties, ReactElement, useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { setSelectedBoard } from "../../app/features/selectedBoard/selectedBoardSlice"
-import { RootState, useGetBoardByIdQuery } from "../../app/strore"
-import { ProgressColumn } from "../../data"
+import { CSSProperties, ReactElement } from "react"
+import { useSelector } from "react-redux"
+import { RootState } from "../../app/strore"
 import { Board } from "./Board"
 import { Navigation } from "./Navigation"
 
 export {RightSection}
 
 const RightSection: () => ReactElement = () => {
-
-    const columns: ProgressColumn[] = ProgressColumn.getMocketProgressColumns()
 
     const isDarkMode = useSelector((state: RootState) => state.isDarkMode.value)
     const isSideBarShown = useSelector((state: RootState) => state.isSideBarShown.value)
@@ -42,7 +37,7 @@ const RightSection: () => ReactElement = () => {
                 ...styles.content, 
                 backgroundColor: isDarkMode ? 'rgba(34,33,45,255)' : 'rgba(245,247,254,255)'
             }}>
-                <Board columns={columns} darkMode={isDarkMode}></Board>
+                <Board/>
             </div>
         </div>
     )

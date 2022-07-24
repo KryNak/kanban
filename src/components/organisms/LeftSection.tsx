@@ -6,8 +6,7 @@ import { AppLogoTitle } from "../molecules/AppLogoTitle"
 import { colors } from '../../colors'
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
 import { CrudOption } from "../../enums"
-import { Board } from "../../dto/DTOs"
-import { RootState, useGetBoardsQuery } from "../../app/strore"
+import { RootState, useGetBoardsQuery, useGetBoardByIdQuery } from "../../app/strore"
 import { useDispatch, useSelector } from "react-redux"
 import { hideSideBar, showSideBar } from "../../app/features/isSideBarShown/isSideBarShown"
 import { selectDarkMode, selectLightMode } from "../../app/features/isDarkMode/isDarkModeSlice"
@@ -94,18 +93,21 @@ const styles: {[name: string]: CSSProperties} = {
 const LeftSection: () => ReactElement = () => {
 
     const [isCreateBoardDialogOpen, setIsCreateBoardDialogOpen] = useState<boolean>(false)
+
     const selectedBoardId: string | null = useSelector((state: RootState) => state.selectedBoardId.value)
     const isDarkMode: boolean = useSelector((state: RootState) => state.isDarkMode.value)
     const isSideBarShown: boolean = useSelector((state: RootState) => state.isSideBarShown.value)
+
     const {data, isSuccess} = useGetBoardsQuery()
 
-    const boards: Board[] = isSuccess ? data : []
+    const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(setSelectedBoardId(boards.length > 0 ? boards[0].id : null))
+        if(isSuccess) {
+            const selectedBoard = data.length > 0 ? data[0] : null
+            dispatch(setSelectedBoardId(selectedBoard?.id ?? null))
+        }
     }, [isSuccess])
-
-    const dispatch = useDispatch()
 
     const isSelected = (id: string): boolean => {
         return selectedBoardId != null && selectedBoardId === id
@@ -148,12 +150,12 @@ const LeftSection: () => ReactElement = () => {
 
             <div style={styles.boardsAnnounce}>
                 <HeaderTypography>
-                    all boards ({boards.length})
+                    all boards ({isSuccess ? data.length : 0})
                 </HeaderTypography>
             </div>
 
             <List sx={{ padding: 0, minHeight: 'max-content' }}>
-                {boards.map((board, index) => {
+                {isSuccess && data.map((board, index) => {
                     return (
                         <ListItem key={index} sx={{ ...styles.boarderListItem }}>
                             <ListItemButton onClick={handleSelectBoard(board.id)} sx={{ ...styles.boarderListItemButton, '&.Mui-selected': { backgroundColor: 'rgba(99,95,199,255)', minWidth: '280px' }, '&.Mui-selected:hover': { backgroundColor: 'rgba(99,95,199,255)' } }} selected={isSelected(board.id)}>
@@ -175,7 +177,7 @@ const LeftSection: () => ReactElement = () => {
                     Create New Board
                 </Typography>
             </ButtonBase>
-            <AddEditBoardDialog crudOption={CrudOption.Create} isOpen={isCreateBoardDialogOpen} isDarkMode={isDarkMode} onClose={handleCreateBoardDialogClose}/>
+            <AddEditBoardDialog crudOption={CrudOption.Create} isOpen={isCreateBoardDialogOpen} onClose={handleCreateBoardDialogClose}/>
 
             <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)' }}>
                 <LightMode htmlColor='rgba(118,122,134,255)' />

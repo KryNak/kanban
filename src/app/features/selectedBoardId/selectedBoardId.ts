@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-export { selectedBoardIdSlice as selectedBoardSlice, selectedBoardIdSliceReducer, setSelectedBoardId }
+export { selectedBoardIdSlice, selectedBoardIdSliceReducer, setSelectedBoardId }
 
 interface SelectedBoardIdState {
     value: string | null

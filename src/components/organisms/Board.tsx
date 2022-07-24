@@ -1,16 +1,19 @@
 import { ButtonBase, Stack, Typography } from "@mui/material"
-import React from "react"
-import { ProgressColumn } from "../../data"
+import { skipToken } from "@reduxjs/toolkit/dist/query"
+import React, { ReactElement, useEffect } from "react"
+import { useSelector } from "react-redux"
+import { RootState, useGetBoardByIdQuery } from "../../app/strore"
+import { Board as BoardModel } from "../../dto/DTOs"
 import { BoardColumn } from "../molecules/TasksColumn"
 
 export {Board}
 
-type BoardProps = {
-    columns: ProgressColumn[],
-    darkMode: boolean
-}
+function Board(): React.ReactElement {
 
-function Board({columns, darkMode}: BoardProps): React.ReactElement {
+    const darkMode = useSelector((state: RootState) => state.isDarkMode.value)
+    const selectedBoardId: string | null = useSelector((state: RootState) => state.selectedBoardId.value)
+
+    const {data: selectedBoard, isSuccess} = useGetBoardByIdQuery(selectedBoardId ?? skipToken)
 
     const styles: {[name: string]: React.CSSProperties} = {
         horizonalListOfColumns: {
@@ -65,12 +68,12 @@ function Board({columns, darkMode}: BoardProps): React.ReactElement {
         }
     }
 
-    return (
+    const boardSelectedContent: ReactElement = (
         <Stack sx={{...styles.horizonalListOfColumns, ...scroll}}>
             {
-                columns && columns.map((column, index) => {
+                selectedBoard && selectedBoard.columns.map((column) => {
                     return (
-                        <BoardColumn name={column.name} tasks={column.subtasks} darkMode={darkMode} color={column.color} />
+                        <BoardColumn key={column.id} name={column.name} columnId={column.id} color={'red'} />
                     )
                 })
             }
@@ -80,6 +83,16 @@ function Board({columns, darkMode}: BoardProps): React.ReactElement {
                 </Typography>
             </ButtonBase>
         </Stack>
+    )
+
+    const boardNotSelectedContent: ReactElement = (
+        <div>
+            No Content
+        </div>
+    )
+
+    return (
+        selectedBoardId && isSuccess ? boardSelectedContent : boardNotSelectedContent
     )
 
 }
