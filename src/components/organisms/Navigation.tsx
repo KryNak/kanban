@@ -38,7 +38,7 @@ const styles: {[name: string]: CSSProperties} = {
     },
     addButton: {
         backgroundColor: colors.violet,
-        padding: '10px',
+        padding: '10px 20px',
         borderRadius: '25px',
         whiteSpace: 'nowrap'
     },

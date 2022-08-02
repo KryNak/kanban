@@ -111,7 +111,7 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
     }
 
     const handleAppendColumn = () => {
-        append(new Column('', '', []))
+        append(new Column('', '', [], fields.length + 1))
     }
 
     const handleRemoveColumn = (index: number) => () => {
@@ -120,12 +120,11 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
 
     const onSubmit = (data: FormProps) => {
         if(crudOption === CrudOption.Create) {
-            createBoard(new CreateBoardRequestDto(data.boardName, data.columns.map(e => new ColumnDto(e.name))))
+            createBoard(new CreateBoardRequestDto(data.boardName, data.columns.map((e, index) => new ColumnDto(e.name, index))))
         }
         else if(crudOption === CrudOption.Edit && selectedBoardId) {
             console.log(data.columns)
-
-            updateBoard({id: selectedBoardId, body: new UpdateBoardRequestDto(selectedBoardId, data.boardName, data.columns)} as UpdateBoardType)
+            updateBoard({id: selectedBoardId, body: new UpdateBoardRequestDto(selectedBoardId, data.boardName, data.columns.map((e, index) => new Column(e.id, e.name, e.tasks, index)))} as UpdateBoardType)
         }
 
         onClose()
@@ -166,6 +165,13 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
                             )
                         })}
                     </List>
+                    {
+                        errors.columns ? (
+                            <Typography fontSize={13} color={'red'} sx={{marginBottom: '0.5em'}}>{errors.columns.message}</Typography>
+                        ) : (
+                            null
+                        )
+                    }
                     <ButtonBase onClick={handleAppendColumn} sx={styles.addSubtaskButton}>+ Add New Column</ButtonBase>
                 </div>
                 <ButtonBase onClick={handleSubmit(onSubmit)} sx={styles.dialogButton}>{crudOption === CrudOption.Create ? 'Create New Board' : 'Update Board'}</ButtonBase>

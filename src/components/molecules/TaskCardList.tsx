@@ -60,7 +60,7 @@ function TodoCardList({columnId}: TodoCardListProp): React.ReactElement {
             {
                 isSuccess && column.tasks.map((task) => {
                     return (
-                        <TodoCard key={task.title} task={task} darkMode={darkMode}/>
+                        <TodoCard key={task.title} task={task} darkMode={darkMode} columnId={columnId ?? ""}/>
                     )
                 })
             }

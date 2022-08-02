@@ -1,9 +1,10 @@
 import { ButtonBase, Stack, Typography } from "@mui/material"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
-import React, { ReactElement, useEffect } from "react"
+import React, { ReactElement } from "react"
 import { useSelector } from "react-redux"
 import { RootState, useGetBoardByIdQuery } from "../../app/strore"
-import { Board as BoardModel } from "../../dto/DTOs"
+import { colors } from "../../colors"
+import { KanbanInput } from "../atoms/KanbanInput"
 import { BoardColumn } from "../molecules/TasksColumn"
 
 export {Board}
@@ -86,8 +87,16 @@ function Board(): React.ReactElement {
     )
 
     const boardNotSelectedContent: ReactElement = (
-        <div>
-            No Content
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', flexWrap: 'nowrap', gap: '1.5em'}}>
+            <Typography color={colors.headersGrey} textAlign={'center'}>
+                There are no boards yet!<br/>
+                Please create one.
+            </Typography>
+            <ButtonBase sx={{backgroundColor: colors.violet, padding: '10px 20px', borderRadius: '25px', whiteSpace: 'nowrap'}}>
+                <Typography fontSize={14} color={'white'}>
+                    Create Board
+                </Typography>
+            </ButtonBase>
         </div>
     )
 

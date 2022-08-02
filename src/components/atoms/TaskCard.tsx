@@ -19,9 +19,10 @@ const styles: {[name: string]: React.CSSProperties} = {
 type TodoCardProps = {
     task: Task
     darkMode: boolean
+    columnId: string
 }
 
-const TodoCard = ({task, darkMode}: TodoCardProps): ReactElement => {
+const TodoCard = ({task, darkMode, columnId}: TodoCardProps): ReactElement => {
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
@@ -41,11 +42,11 @@ const TodoCard = ({task, darkMode}: TodoCardProps): ReactElement => {
                         {task.title}
                     </Typography>
                     <Typography sx={{textAlign: 'start'}} fontSize='12px' color={'rgba(118,122,134,255)'}>
-                        {task.subtasks.filter(e => e.isCompleted === true).length} of {task.subtasks.length} substasks
+                        {task.subtasks.filter(e => e.isCompleted).length} of {task.subtasks.length} substasks
                     </Typography>
                 </div>
             </ButtonBase>
-            <DetailsTaskDialog handleClose={handleClose} isOpen={isOpen} task={task} isDarkMode={darkMode}></DetailsTaskDialog>
+            <DetailsTaskDialog columnId={columnId} handleClose={handleClose} isOpen={isOpen} task={task} isDarkMode={darkMode}></DetailsTaskDialog>
         </>
     )
 }

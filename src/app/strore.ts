@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery, setupListeners } from "@reduxjs/toolkit/query/react"
-import { Board, Column, CreateBoardRequestDto, UpdateBoardRequestDto } from "../dto/DTOs"
+import { idText } from "typescript"
+import { Board, Column, CreateBoardRequestDto, CreateTaskRequestDto, Subtask, UpdateBoardRequestDto, UpdateSubtaskRequestDto } from "../dto/DTOs"
 import { isDarkModeReducer } from "./features/isDarkMode/isDarkModeSlice"
 import { isSideBarSliceReducer } from "./features/isSideBarShown/isSideBarShown"
 import { selectedBoardSliceReducer } from "./features/selectedBoard/selectedBoardSlice"
@@ -12,17 +13,34 @@ export type UpdateBoardType = {
     body: UpdateBoardRequestDto
 }
 
+export type UpdateSubtaskType = {
+    id: string,
+    body: UpdateSubtaskRequestDto
+    columnId: string
+}
+
+export type DeleteTaskType = {
+    id: string,
+    columnId: string
+}
+
+export type CreateTaskType = {
+    body: CreateTaskRequestDto
+    columnId: string
+}
+
 const kanbanApi = createApi({
     reducerPath: "kanbanApi",
     baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8080/api" }),
-    tagTypes: ["Boards"],
+    tagTypes: ["Boards", "Columns", "Column"],
     endpoints: (builder) => ({
         getBoards: builder.query<Board[], void>({
             query: () => "boards",
             providesTags: ['Boards']
         }),
         getBoardById: builder.query<Board, string>({
-            query: (id) => `boards/${id}`
+            query: (id) => `boards/${id}`,
+            providesTags: ['Columns']
         }),
         deleteBoardById: builder.mutation<void, string>({
             query: (id) => ({
@@ -39,7 +57,8 @@ const kanbanApi = createApi({
                 headers: {
                     'content-type': 'application/json'
                 }
-            })
+            }),
+            invalidatesTags: ["Boards", "Columns"]
         }),
         createBoard: builder.mutation<void, CreateBoardRequestDto>({
             query: (board) => ({
@@ -53,7 +72,40 @@ const kanbanApi = createApi({
             invalidatesTags: ["Boards"]
         }),
         getColumnById: builder.query<Column, string>({
-            query: (id) => `columns/${id}`
+            query: (id) => `columns/${id}`,
+            providesTags: (result, error, body) => [{type: 'Column', id: result?.id}]
+        }),
+        updateSubtaskById: builder.mutation<void, UpdateSubtaskType>({
+            query: (arg) => ({
+                url: `subtasks/${arg.id}`,
+                method: 'PUT',
+                body: JSON.stringify(arg.body),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            }),
+            invalidatesTags: (result, error, body) => [{type: 'Column', id: body.columnId}]
+        }),
+        deleteTaskById: builder.mutation<void, DeleteTaskType>({
+            query: (body) => ({
+                url: `tasks/${body.id}`,
+                method: 'DELETE',
+                headers: {
+                    'content-type': 'application/json'
+                }
+            }),
+            invalidatesTags: (result, error, body) => [{type: 'Column', id: body.columnId}]
+        }),
+        createTask: builder.mutation<void, CreateTaskType>({
+            query: (content) => ({
+                url: 'tasks',
+                method: 'POST',
+                body: JSON.stringify(content.body),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            }),
+            invalidatesTags: (result, error, body) => [{type: 'Column', id: body.columnId}]
         })
     })
 })
@@ -82,5 +134,7 @@ export const {
     useDeleteBoardByIdMutation, 
     useCreateBoardMutation, 
     useGetColumnByIdQuery,
-    useUpdateBoardByIdMutation
+    useUpdateBoardByIdMutation,
+    useUpdateSubtaskByIdMutation,
+    useDeleteTaskByIdMutation
 } = kanbanApi
