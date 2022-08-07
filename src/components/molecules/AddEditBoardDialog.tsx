@@ -1,11 +1,10 @@
-import { Dialog, Typography, ButtonBase, TextField, List, ListItem, IconButton } from "@mui/material"
-import { CSSProperties, ReactElement, useCallback, useEffect } from "react"
+import { Dialog, Typography, ButtonBase, List, ListItem, IconButton, FormHelperText, FormControl } from "@mui/material"
+import { CSSProperties, ReactElement, useEffect } from "react"
 import { KanbanInput } from "../atoms/KanbanInput"
-import { MultiInput } from "./MultiInput"
 import { colors } from '../../colors'
-import { CrudOption, ModelClass } from "../../enums"
-import { Board, Column, ColumnDto, CreateBoardRequestDto, Task, UpdateBoardRequestDto } from "../../dto/DTOs"
-import { useForm, useFieldArray, FieldValues } from "react-hook-form"
+import { CrudOption } from "../../enums"
+import { Column, ColumnDto, CreateBoardRequestDto, UpdateBoardRequestDto } from "../../dto/DTOs"
+import { useForm, useFieldArray } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as Yup from 'yup';
 import { Clear } from "@mui/icons-material"
@@ -53,7 +52,7 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
             gap: '1.5em',
             flexDirection: 'column'
         },
-        addSubtaskButton: {
+        addColumnButton: {
             padding: '15px',
             backgroundColor: isDarkMode ? 'white' : colors.secondaryDark,
             color: isDarkMode ? colors.violet : 'white',
@@ -98,7 +97,7 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
             setValue('boardName', selectedBoard?.name ?? '')
             setValue('columns', selectedBoard?.columns ?? [])
         }
-    }, [isOpen, reset])
+    }, [isOpen])
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -144,7 +143,7 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
                     placeholder="e.g. Take coffee break" 
                     darkMode={isDarkMode}
                 />
-                <div style={{width: '100%'}}>
+                <FormControl sx={{width: '100%'}} error={errors.columns ? true: false}>
                     <Typography sx={{marginBottom: '0.5em'}} fontSize={14} color={isDarkMode ? 'white': 'black'}>Columns</Typography>
                     <List sx={{margin: '0', padding: 0, width: '100%'}}>
                         {fields.map((field, index) => {
@@ -165,15 +164,9 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
                             )
                         })}
                     </List>
-                    {
-                        errors.columns ? (
-                            <Typography fontSize={13} color={'red'} sx={{marginBottom: '0.5em'}}>{errors.columns.message}</Typography>
-                        ) : (
-                            null
-                        )
-                    }
-                    <ButtonBase onClick={handleAppendColumn} sx={styles.addSubtaskButton}>+ Add New Column</ButtonBase>
-                </div>
+                    <FormHelperText sx={{marginBottom: '0.5em'}}>{errors.columns?.message}</FormHelperText>
+                    <ButtonBase onClick={handleAppendColumn} sx={styles.addColumnButton}>+ Add New Column</ButtonBase>
+                </FormControl>
                 <ButtonBase onClick={handleSubmit(onSubmit)} sx={styles.dialogButton}>{crudOption === CrudOption.Create ? 'Create New Board' : 'Update Board'}</ButtonBase>
             </form>
         </Dialog>

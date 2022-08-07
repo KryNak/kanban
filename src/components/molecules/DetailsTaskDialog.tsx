@@ -110,7 +110,7 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
     const [deleteTask] = useDeleteTaskByIdMutation()
 
     const {data: selectedColumn} = useGetColumnByIdQuery(columnId ?? skipToken)
-    const subtasks = selectedColumn?.tasks.find((t) => t.id === task.id)?.subtasks.slice().sort((a, b) => a.position - b.position) ?? []
+    const subtasks = selectedColumn?.tasks.find((t) => t.id === task.id)?.subtasks ?? []
     
 
     const handleMenuClose = () => {
@@ -208,7 +208,7 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
                 <MenuItem onClick={handleOpenRemovingDialog} sx={{color: '#DC3545'}}>Delete Task</MenuItem>
             </Menu>
             <RemovingDialog mode={ModelClass.Task} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleCloseRemovingDialog} onCancel={handleCloseRemovingDialog} onDelete={handleTaskDelete}/>
-            <AddEditTaskDialog isOpen={isTaskEditDialogOpen} onClose={handleEditDialogClose} crudOption={CrudOption.Edit}/>
+            <AddEditTaskDialog isOpen={isTaskEditDialogOpen} onClose={handleEditDialogClose} crudOption={CrudOption.Edit} task={task}/>
         </>
     )
 }

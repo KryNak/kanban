@@ -1,6 +1,4 @@
-export { Board, Column, Task, Subtask, CreateBoardRequestDto, ColumnDto, UpdateBoardRequestDto, UpdateSubtaskRequestDto, CreateTaskRequestDto }
-
-class Board {
+export class Board {
 
     id: string
     name: string
@@ -14,7 +12,7 @@ class Board {
 
 }
 
-class Column {
+export class Column {
 
     id: string
     name: string
@@ -30,7 +28,7 @@ class Column {
 
 }
 
-class Task {
+export class Task {
 
     id: string
     title: string
@@ -50,7 +48,7 @@ class Task {
 
 }
 
-class Subtask {
+export class Subtask {
 
     id: string
     isCompleted: boolean
@@ -66,7 +64,7 @@ class Subtask {
 
 }
 
-class ColumnDto {
+export class ColumnDto {
 
     name: string
     position: number
@@ -78,7 +76,7 @@ class ColumnDto {
 
 }
 
-class CreateBoardRequestDto {
+export class CreateBoardRequestDto {
 
     name: string
     columns: ColumnDto[]
@@ -90,7 +88,7 @@ class CreateBoardRequestDto {
 
 }
 
-class UpdateBoardRequestDto {
+export class UpdateBoardRequestDto {
 
     id: string
     name: string
@@ -104,7 +102,7 @@ class UpdateBoardRequestDto {
 
 }
 
-class UpdateSubtaskRequestDto {
+export class UpdateSubtaskRequestDto {
 
     id: string
     isCompleted: boolean
@@ -118,19 +116,62 @@ class UpdateSubtaskRequestDto {
 
 }
 
-class CreateTaskRequestDto {
+export class CreateTaskRequestDto {
 
-    id: string
     title: String
     description: String
     status: String
-    position: number
+    subtasks: CreateTaskSubtaskRequestDto[]
 
-    constructor(id: string, title: string, description: string, status: string, position: number){
-        this.id = id
+    constructor(title: string, description: string, status: string, subtasks: CreateTaskSubtaskRequestDto[]){
         this.title = title
         this.description = description
         this.status = status
+        this.subtasks = subtasks
+    }
+
+}
+
+export class CreateTaskSubtaskRequestDto {
+
+    title: string
+    position: number
+
+    constructor(title: string, position: number) {
+        this.title = title
+        this.position = position
+    }
+
+}
+ 
+export class UpdateTaskRequestDto {
+
+    id: string
+    title: string
+    position: number
+    columnId: string
+    subtasks: UpdateTaskSubtaskRequestDto[]
+
+    constructor(id: string, title: string, position: number, columnId: string, subtasks: UpdateTaskSubtaskRequestDto[]) {
+        this.id = id
+        this.title = title
+        this.position = position
+        this.columnId = columnId
+        this.subtasks = subtasks
+    }
+
+
+}
+
+export class UpdateTaskSubtaskRequestDto {
+
+    id: string
+    title: string
+    position: number
+
+    constructor(id: string, title: string, position: number) {
+        this.id = id
+        this.title = title
         this.position = position
     }
 

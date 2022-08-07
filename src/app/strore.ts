@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery, setupListeners } from "@reduxjs/toolkit/query/react"
 import { idText } from "typescript"
-import { Board, Column, CreateBoardRequestDto, CreateTaskRequestDto, Subtask, UpdateBoardRequestDto, UpdateSubtaskRequestDto } from "../dto/DTOs"
+import { Board, Column, CreateBoardRequestDto, CreateTaskRequestDto, Subtask, UpdateBoardRequestDto, UpdateSubtaskRequestDto, UpdateTaskRequestDto } from "../dto/DTOs"
 import { isDarkModeReducer } from "./features/isDarkMode/isDarkModeSlice"
 import { isSideBarSliceReducer } from "./features/isSideBarShown/isSideBarShown"
 import { selectedBoardSliceReducer } from "./features/selectedBoard/selectedBoardSlice"
@@ -27,6 +27,20 @@ export type DeleteTaskType = {
 export type CreateTaskType = {
     body: CreateTaskRequestDto
     columnId: string
+}
+
+export class UpdateTaskRequestBody {
+
+    taskId: string
+    columnId: string
+    requestBody: UpdateTaskRequestDto
+
+    constructor(taskId: string, columnId: string, requestBody: UpdateTaskRequestDto) {
+        this.taskId = taskId
+        this.columnId = columnId
+        this.requestBody = requestBody
+    }
+
 }
 
 const kanbanApi = createApi({
@@ -106,6 +120,17 @@ const kanbanApi = createApi({
                 }
             }),
             invalidatesTags: (result, error, body) => [{type: 'Column', id: body.columnId}]
+        }),
+        updateTask: builder.mutation<void, UpdateTaskRequestBody>({
+            query: (content) => ({
+                url: `tasks/${content.columnId}`,
+                method: 'PUT',
+                body: JSON.stringify(content.requestBody),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            }),
+            invalidatesTags: (result, error, body) => [{type: 'Column', id: body.columnId}]
         })
     })
 })
@@ -136,5 +161,7 @@ export const {
     useGetColumnByIdQuery,
     useUpdateBoardByIdMutation,
     useUpdateSubtaskByIdMutation,
-    useDeleteTaskByIdMutation
+    useDeleteTaskByIdMutation,
+    useCreateTaskMutation,
+    useUpdateTaskMutation
 } = kanbanApi
