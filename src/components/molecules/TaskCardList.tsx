@@ -3,7 +3,7 @@ import { Task } from '../../dto/DTOs'
 import { TodoCard } from '../atoms/TaskCard'
 import { Stack } from '@mui/material'
 import { useSelector } from 'react-redux'
-import { RootState, useGetColumnByIdQuery } from '../../app/strore'
+import { RootState, useGetColumnByIdQuery } from '../../app/store'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 
 export {TodoCardList}

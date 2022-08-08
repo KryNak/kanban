@@ -6,7 +6,7 @@ import { AppLogoTitle } from "../molecules/AppLogoTitle"
 import { colors } from '../../colors'
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
 import { CrudOption } from "../../enums"
-import { RootState, useGetBoardsQuery, useGetBoardByIdQuery } from "../../app/strore"
+import { RootState, useGetBoardsQuery, useGetBoardByIdQuery } from "../../app/store"
 import { useDispatch, useSelector } from "react-redux"
 import { hideSideBar, showSideBar } from "../../app/features/isSideBarShown/isSideBarShown"
 import { selectDarkMode, selectLightMode } from "../../app/features/isDarkMode/isDarkModeSlice"

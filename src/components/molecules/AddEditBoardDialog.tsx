@@ -8,7 +8,7 @@ import { useForm, useFieldArray } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as Yup from 'yup';
 import { Clear } from "@mui/icons-material"
-import { RootState, UpdateBoardType, useCreateBoardMutation, useGetBoardByIdQuery, useUpdateBoardByIdMutation } from "../../app/strore"
+import { RootState, UpdateBoardType, useCreateBoardMutation, useGetBoardByIdQuery, useUpdateBoardByIdMutation } from "../../app/store"
 import { useSelector } from "react-redux"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
 

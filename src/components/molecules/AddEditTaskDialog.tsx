@@ -1,39 +1,41 @@
-import { ButtonBase, Dialog, FormControl, FormHelperText, IconButton, List, ListItem, MenuItem, Select, Typography } from "@mui/material"
+import { ButtonBase, Dialog, FormControl, FormHelperText, IconButton, List, ListItem, MenuItem, Select, TextField, Typography } from "@mui/material"
 import { CSSProperties, useEffect } from "react"
 import { useSelector } from "react-redux"
-import { CreateTaskType, RootState, useCreateTaskMutation, useGetBoardByIdQuery } from "../../app/strore"
+import { CreateTaskType, RootState, UpdateTaskRequestBody, useCreateTaskMutation, useGetBoardByIdQuery, useUpdateTaskMutation } from "../../app/store"
 import { colors } from "../../colors"
 import { CrudOption } from "../../enums"
 import { KanbanInput } from "../atoms/KanbanInput"
 import * as Yup from 'yup'
-import { useForm, useFieldArray } from "react-hook-form"
+import { useForm, useFieldArray, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Clear, KeyboardArrowDown } from "@mui/icons-material"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
-import { CreateTaskRequestDto, CreateTaskSubtaskRequestDto, Subtask, Task } from "../../dto/DTOs"
+import { CreateTaskRequestDto, CreateTaskSubtaskRequestDto, Subtask, Task, UpdateTaskRequestDto, UpdateTaskSubtaskRequestDto } from "../../dto/DTOs"
 export {AddEditTaskDialog}
 
 type AddEditTaskDialogProps = {
     onClose: () => void,
     isOpen: boolean,
     crudOption: CrudOption,
-    task?: Task
+    task?: Task,
+    parentColumnId?: string 
 }
 
 type FormProps = {
     title: string,
     description: string,
-    status: string,
+    statusId: string,
     subtasks: Subtask[]
 }
 
-const AddEditTaskDialog = ({isOpen, onClose, crudOption, task}: AddEditTaskDialogProps) => {
+const AddEditTaskDialog = ({isOpen, onClose, crudOption, task, parentColumnId}: AddEditTaskDialogProps) => {
 
     const isDarkMode = useSelector((state: RootState) => state.isDarkMode.value)
     const selectedBoardId = useSelector((state: RootState) => state.selectedBoardId.value)
 
     const {data: selectedBoard} = useGetBoardByIdQuery(selectedBoardId ?? skipToken)
     const [createTask] = useCreateTaskMutation()
+    const [updateTask] = useUpdateTaskMutation()
 
     const selectStyle= {
         width: '100%',
@@ -90,7 +92,7 @@ const AddEditTaskDialog = ({isOpen, onClose, crudOption, task}: AddEditTaskDialo
             .required('Task title is required.'),
         description: Yup
             .string(),
-        status: Yup
+        statusId: Yup
             .string()
             .required('Status is required.'),
         subtasks: Yup
@@ -116,7 +118,7 @@ const AddEditTaskDialog = ({isOpen, onClose, crudOption, task}: AddEditTaskDialo
         defaultValues: {
             title: '',
             description: '',
-            status: '',
+            statusId: '',
             subtasks: []
         }
     })
@@ -129,9 +131,9 @@ const AddEditTaskDialog = ({isOpen, onClose, crudOption, task}: AddEditTaskDialo
 
             setTimeout(() => {
                 if(crudOption === CrudOption.Edit) {
-                    setValue('title', task?.title ?? "huj")
+                    setValue('title', task?.title ?? "")
                     setValue('description', task?.description ?? "")
-                    setValue('status', task?.status ?? "")
+                    setValue('statusId', parentColumnId ?? "")
                     setValue('subtasks', task?.subtasks ?? [])
                 }
             }, 75)
@@ -145,7 +147,12 @@ const AddEditTaskDialog = ({isOpen, onClose, crudOption, task}: AddEditTaskDialo
 
     const onSubmit = (data: FormProps) => {
         if(crudOption === CrudOption.Create) {
-            createTask({body: new CreateTaskRequestDto(data.title, data.description, data.status, data.subtasks.map((subtask, index) => new CreateTaskSubtaskRequestDto(subtask.title, index))), columnId: data.status} as CreateTaskType)
+            createTask({body: new CreateTaskRequestDto(data.title, data.description, data.statusId, data.subtasks.map((subtask, index) => new CreateTaskSubtaskRequestDto(subtask.title, index))), columnId: data.statusId} as CreateTaskType)
+        }
+        else if(crudOption === CrudOption.Edit && parentColumnId) {
+            const taskToUpdate = task!!
+            const requestBody = new UpdateTaskRequestDto(taskToUpdate.id, data.title, data.description, taskToUpdate.position, data.statusId, data.subtasks.map((subtask, index) => new UpdateTaskSubtaskRequestDto(subtask.id, subtask.title, subtask.isCompleted, index)))
+            updateTask(new UpdateTaskRequestBody(taskToUpdate.id, parentColumnId, requestBody))
         }
 
         onClose()
@@ -215,19 +222,25 @@ const AddEditTaskDialog = ({isOpen, onClose, crudOption, task}: AddEditTaskDialo
 
                 <div style={{width: '100%'}}>
                     <Typography sx={{paddingBottom: '0.5em'}} fontSize={14} color={isDarkMode ? 'white': 'black'}>Status</Typography>
-                    <FormControl error={errors.status ? true : false} sx={{width: '100%'}}>
-                        <Select
-                            inputProps={register('status')}
-                            MenuProps={{sx: {'& .MuiPaper-root': {backgroundColor: isDarkMode ? colors.primaryDark : colors.primaryLight, '& li': {color: isDarkMode ? 'white' : 'black'}}}}} 
-                            IconComponent={KeyboardArrowDown} 
-                            sx={selectStyle}>
-                            {
-                                selectedBoard && selectedBoard.columns.map((column) => {
-                                    return <MenuItem key={column.id} value={column.id}>{column.name}</MenuItem>
-                                })
-                            }
-                        </Select>
-                        <FormHelperText>{errors.status?.message}</FormHelperText>
+                    <FormControl error={errors.statusId ? true : false} sx={{width: '100%'}}>
+                        <Controller name="statusId" control={control} render={({field}) => {
+                            return (
+                                <Select
+                                    MenuProps={{sx: {'& .MuiPaper-root': {backgroundColor: isDarkMode ? colors.primaryDark : colors.primaryLight, '& li': {color: isDarkMode ? 'white' : 'black'}}}}} 
+                                    IconComponent={KeyboardArrowDown}
+                                    sx={selectStyle}
+                                    onChange={field.onChange} 
+                                    value={field.value}
+                                >
+                                    {
+                                        selectedBoard && selectedBoard.columns.map((column) => {
+                                            return <MenuItem key={column.id} value={column.id}>{column.name}</MenuItem>
+                                        })
+                                    }
+                                </Select>
+                            )
+                        }}/>
+                        <FormHelperText>{errors.statusId?.message}</FormHelperText>
                     </FormControl>
                 </div>
 

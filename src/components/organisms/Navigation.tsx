@@ -6,7 +6,7 @@ import { colors } from '../../colors'
 import { CrudOption, ModelClass } from "../../enums"
 import { RemovingDialog } from "../molecules/RemovingDialog"
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
-import { RootState, useDeleteBoardByIdMutation, useGetBoardByIdQuery, useGetBoardsQuery } from "../../app/strore"
+import { RootState, useDeleteBoardByIdMutation, useGetBoardByIdQuery, useGetBoardsQuery } from "../../app/store"
 import { useSelector } from "react-redux"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
 

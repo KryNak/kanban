@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery, setupListeners } from "@reduxjs/toolkit/query/react"
-import { idText } from "typescript"
 import { Board, Column, CreateBoardRequestDto, CreateTaskRequestDto, Subtask, UpdateBoardRequestDto, UpdateSubtaskRequestDto, UpdateTaskRequestDto } from "../dto/DTOs"
 import { isDarkModeReducer } from "./features/isDarkMode/isDarkModeSlice"
 import { isSideBarSliceReducer } from "./features/isSideBarShown/isSideBarShown"
@@ -39,6 +38,20 @@ export class UpdateTaskRequestBody {
         this.taskId = taskId
         this.columnId = columnId
         this.requestBody = requestBody
+    }
+
+}
+
+export class UpdateTaskStatusRequestBody {
+
+    taskId: string
+    prevColumnId: string
+    targetColumnId: string
+
+    constructor(taskId: string, prevCoumnId: string, targetColumnId: string) {
+        this.taskId = taskId
+        this.prevColumnId = prevCoumnId
+        this.targetColumnId = targetColumnId
     }
 
 }
@@ -123,14 +136,21 @@ const kanbanApi = createApi({
         }),
         updateTask: builder.mutation<void, UpdateTaskRequestBody>({
             query: (content) => ({
-                url: `tasks/${content.columnId}`,
+                url: `tasks/${content.taskId}`,
                 method: 'PUT',
                 body: JSON.stringify(content.requestBody),
                 headers: {
                     'content-type': 'application/json'
                 }
             }),
-            invalidatesTags: (result, error, body) => [{type: 'Column', id: body.columnId}]
+            invalidatesTags: (result, error, body) => [{type: 'Column', id: body.columnId}, {type: 'Column', id: body.requestBody.columnId}]
+        }),
+        updateTasksStatus: builder.mutation<void, UpdateTaskStatusRequestBody>({
+            query: (content) => ({
+                url: `tasks/${content.taskId}/status/${content.targetColumnId}`,
+                method: 'PUT',
+            }),
+            invalidatesTags: (result, error, body) => [{type: 'Column', id: body.prevColumnId}, {type: 'Column', id: body.targetColumnId}]
         })
     })
 })
@@ -163,5 +183,6 @@ export const {
     useUpdateSubtaskByIdMutation,
     useDeleteTaskByIdMutation,
     useCreateTaskMutation,
-    useUpdateTaskMutation
+    useUpdateTaskMutation,
+    useUpdateTasksStatusMutation
 } = kanbanApi

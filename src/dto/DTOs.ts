@@ -32,15 +32,13 @@ export class Task {
 
     id: string
     title: string
-    status: string
     description: string
     subtasks: Subtask[]
-    position?: number
+    position: number
 
-    constructor(id: string, title: string, status: string, description: string, subtasks: Subtask[], position?: number) {
+    constructor(id: string, title: string, description: string, subtasks: Subtask[], position: number) {
         this.id = id
         this.title = title
-        this.status = status
         this.description = description
         this.subtasks = subtasks
         this.position = position
@@ -148,13 +146,15 @@ export class UpdateTaskRequestDto {
 
     id: string
     title: string
+    description: string
     position: number
     columnId: string
     subtasks: UpdateTaskSubtaskRequestDto[]
 
-    constructor(id: string, title: string, position: number, columnId: string, subtasks: UpdateTaskSubtaskRequestDto[]) {
+    constructor(id: string, title: string, description: string, position: number, columnId: string, subtasks: UpdateTaskSubtaskRequestDto[]) {
         this.id = id
         this.title = title
+        this.description = description
         this.position = position
         this.columnId = columnId
         this.subtasks = subtasks
@@ -167,11 +167,13 @@ export class UpdateTaskSubtaskRequestDto {
 
     id: string
     title: string
+    isCompleted: boolean
     position: number
 
-    constructor(id: string, title: string, position: number) {
+    constructor(id: string, title: string, isCompleted: boolean, position: number) {
         this.id = id
         this.title = title
+        this.isCompleted = isCompleted
         this.position = position
     }
 

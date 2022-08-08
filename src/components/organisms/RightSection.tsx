@@ -1,6 +1,6 @@
 import { CSSProperties, ReactElement } from "react"
 import { useSelector } from "react-redux"
-import { RootState } from "../../app/strore"
+import { RootState } from "../../app/store"
 import { Board } from "./Board"
 import { Navigation } from "./Navigation"
 

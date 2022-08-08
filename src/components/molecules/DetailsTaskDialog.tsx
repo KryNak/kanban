@@ -6,7 +6,7 @@ import { KeyboardArrowDown, MoreVert } from "@mui/icons-material"
 import { RemovingDialog } from "./RemovingDialog"
 import { CrudOption, ModelClass } from "../../enums"
 import { AddEditTaskDialog } from "./AddEditTaskDialog"
-import { RootState, UpdateSubtaskType, useGetBoardByIdQuery, useGetColumnByIdQuery, useDeleteTaskByIdMutation, useUpdateSubtaskByIdMutation } from "../../app/strore"
+import { RootState, UpdateSubtaskType, useGetBoardByIdQuery, useGetColumnByIdQuery, useDeleteTaskByIdMutation, useUpdateSubtaskByIdMutation, useUpdateTasksStatusMutation, UpdateTaskStatusRequestBody } from "../../app/store"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
 import { useSelector } from "react-redux"
 
@@ -99,6 +99,7 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
         }
     }
 
+    const [status, setStatus] = useState<string>(columnId)
     const [isRemovingDialogOpen, setIsRemovingDialogOpen] = useState<boolean>(false)
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
     const [isTaskEditDialogOpen, setIsTaskEditDialogOpen] = useState<boolean>(false)
@@ -108,6 +109,7 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
     const {data: selectedBoard} = useGetBoardByIdQuery(selectedBoardId ?? skipToken)
     const [updateSubtask] = useUpdateSubtaskByIdMutation()
     const [deleteTask] = useDeleteTaskByIdMutation()
+    const [updateTaskStatus] = useUpdateTasksStatusMutation()
 
     const {data: selectedColumn} = useGetColumnByIdQuery(columnId ?? skipToken)
     const subtasks = selectedColumn?.tasks.find((t) => t.id === task.id)?.subtasks ?? []
@@ -142,7 +144,8 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
     }
 
     const handleStatusChange = (e: SelectChangeEvent) => {
-        
+        updateTaskStatus(new UpdateTaskStatusRequestBody(task.id, status, e.target.value))
+        setStatus(e.target.value)
     }
 
     const handleCheck = (subtask: Subtask) => () => {
@@ -185,7 +188,7 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
                 </div>
                 <div style={{width: '100%'}}>
                     <Typography sx={{paddingBottom: '0.5em'}} fontSize={14} color={isDarkMode ? 'white': 'black'}>Status</Typography>
-                    <Select onChange={handleStatusChange} value={columnId} MenuProps={{sx: {'& .MuiPaper-root': {backgroundColor: isDarkMode ? colors.primaryDark : colors.primaryLight, '& li': {color: isDarkMode ? 'white' : 'black'}}}}} IconComponent={KeyboardArrowDown} sx={selectStyle}>
+                    <Select onChange={handleStatusChange} value={status} MenuProps={{sx: {'& .MuiPaper-root': {backgroundColor: isDarkMode ? colors.primaryDark : colors.primaryLight, '& li': {color: isDarkMode ? 'white' : 'black'}}}}} IconComponent={KeyboardArrowDown} sx={selectStyle}>
                         {
                             selectedBoard && selectedBoard.columns.map((column) => {
                                 return <MenuItem key={column.id} value={column.id}>{column.name}</MenuItem>
@@ -208,7 +211,7 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
                 <MenuItem onClick={handleOpenRemovingDialog} sx={{color: '#DC3545'}}>Delete Task</MenuItem>
             </Menu>
             <RemovingDialog mode={ModelClass.Task} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleCloseRemovingDialog} onCancel={handleCloseRemovingDialog} onDelete={handleTaskDelete}/>
-            <AddEditTaskDialog isOpen={isTaskEditDialogOpen} onClose={handleEditDialogClose} crudOption={CrudOption.Edit} task={task}/>
+            <AddEditTaskDialog parentColumnId={columnId} isOpen={isTaskEditDialogOpen} onClose={handleEditDialogClose} crudOption={CrudOption.Edit} task={task}/>
         </>
     )
 }
