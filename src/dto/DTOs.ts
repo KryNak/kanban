@@ -178,3 +178,23 @@ export class UpdateTaskSubtaskRequestDto {
     }
 
 }
+
+export class SelectedTask {
+
+    id: string
+    columnId: string
+    title: string
+    description: string
+    subtasks: Subtask[]
+    position: number
+
+    constructor(id: string = "", columnId: string = "", title: string = "", description: string = "", subtasks: Subtask[] = [], position: number = 0) {
+        this.id = id
+        this.columnId = columnId
+        this.title = title
+        this.description = description
+        this.subtasks = subtasks
+        this.position = position
+    }
+
+}

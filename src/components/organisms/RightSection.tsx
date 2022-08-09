@@ -1,6 +1,7 @@
 import { CSSProperties, ReactElement } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../../app/store"
+import { DetailsTaskDialog } from "../molecules/DetailsTaskDialog"
 import { Board } from "./Board"
 import { Navigation } from "./Navigation"
 
@@ -38,6 +39,7 @@ const RightSection: () => ReactElement = () => {
                 backgroundColor: isDarkMode ? 'rgba(34,33,45,255)' : 'rgba(245,247,254,255)'
             }}>
                 <Board/>
+                <DetailsTaskDialog/>
             </div>
         </div>
     )

@@ -2,9 +2,11 @@ import { configureStore } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery, setupListeners } from "@reduxjs/toolkit/query/react"
 import { Board, Column, CreateBoardRequestDto, CreateTaskRequestDto, Subtask, UpdateBoardRequestDto, UpdateSubtaskRequestDto, UpdateTaskRequestDto } from "../dto/DTOs"
 import { isDarkModeReducer } from "./features/isDarkMode/isDarkModeSlice"
+import { isDetailsDialogOpenSliceReducer } from "./features/isDetailsDialogShown/isDetailsDialogShown"
 import { isSideBarSliceReducer } from "./features/isSideBarShown/isSideBarShown"
 import { selectedBoardSliceReducer } from "./features/selectedBoard/selectedBoardSlice"
 import { selectedBoardIdSliceReducer } from "./features/selectedBoardId/selectedBoardId"
+import { selectedTaskSliceReducer } from "./features/selectedTask/slectedTask"
 export { store }
 
 export type UpdateBoardType = {
@@ -161,7 +163,9 @@ const store = configureStore({
         selectedBoard: selectedBoardSliceReducer,
         isDarkMode: isDarkModeReducer,
         isSideBarShown: isSideBarSliceReducer,
-        selectedBoardId: selectedBoardIdSliceReducer
+        selectedBoardId: selectedBoardIdSliceReducer,
+        selectedTask: selectedTaskSliceReducer,
+        isDetailsDialogOpen: isDetailsDialogOpenSliceReducer
     },
     middleware: (getDefaultMiddleware) => {
         return getDefaultMiddleware().concat(kanbanApi.middleware)

@@ -1,26 +1,22 @@
 import { Dialog, Typography, ButtonBase, IconButton, MenuItem, Menu, List, ListItem, Checkbox, Select, SelectChangeEvent } from "@mui/material"
 import { CSSProperties, ReactElement, useEffect, useState } from "react"
 import { colors } from '../../colors'
-import { Subtask, Task, UpdateSubtaskRequestDto } from "../../dto/DTOs"
+import { SelectedTask, Subtask, Task, UpdateSubtaskRequestDto } from "../../dto/DTOs"
 import { KeyboardArrowDown, MoreVert } from "@mui/icons-material"
 import { RemovingDialog } from "./RemovingDialog"
 import { CrudOption, ModelClass } from "../../enums"
 import { AddEditTaskDialog } from "./AddEditTaskDialog"
-import { RootState, UpdateSubtaskType, useGetBoardByIdQuery, useGetColumnByIdQuery, useDeleteTaskByIdMutation, useUpdateSubtaskByIdMutation, useUpdateTasksStatusMutation, UpdateTaskStatusRequestBody } from "../../app/store"
+import { RootState, UpdateSubtaskType, useGetBoardByIdQuery, useDeleteTaskByIdMutation, useUpdateSubtaskByIdMutation, useUpdateTasksStatusMutation, UpdateTaskStatusRequestBody } from "../../app/store"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { setSelectedTask } from "../../app/features/selectedTask/slectedTask"
+import { hideDetailsDialog } from "../../app/features/isDetailsDialogShown/isDetailsDialogShown"
 
 export {DetailsTaskDialog}
 
-type DetailsTaskDialogProps = {
-    isDarkMode: boolean,
-    task: Task,
-    isOpen: boolean,
-    handleClose: () => void,
-    columnId: string
-}
+const DetailsTaskDialog: () => ReactElement = () => {
 
-const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isDarkMode, task, isOpen, columnId, handleClose}: DetailsTaskDialogProps) => {
+    const isDarkMode = useSelector((root: RootState) => root.isDarkMode.value)
 
     const styles: {[name: string]: CSSProperties} = {
         createNewButton: {
@@ -99,7 +95,11 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
         }
     }
 
-    const [status, setStatus] = useState<string>(columnId)
+    const dispatch = useDispatch()
+
+    const selectedTask = useSelector((root: RootState) => root.selectedTask.value)
+    const isDetailsDialogOpen = useSelector((root: RootState) => root.isDetailsDialogOpen.value)
+
     const [isRemovingDialogOpen, setIsRemovingDialogOpen] = useState<boolean>(false)
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
     const [isTaskEditDialogOpen, setIsTaskEditDialogOpen] = useState<boolean>(false)
@@ -111,8 +111,8 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
     const [deleteTask] = useDeleteTaskByIdMutation()
     const [updateTaskStatus] = useUpdateTasksStatusMutation()
 
-    const {data: selectedColumn} = useGetColumnByIdQuery(columnId ?? skipToken)
-    const subtasks = selectedColumn?.tasks.find((t) => t.id === task.id)?.subtasks ?? []
+    const {columnId, ...task} = selectedTask ?? new SelectedTask()
+    const subtasks: Subtask[] = selectedTask?.subtasks ?? []
     
 
     const handleMenuClose = () => {
@@ -124,9 +124,15 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
     }
 
     const handleOpenRemovingDialog = () => {
-        handleClose()
+        dispatch(hideDetailsDialog())
         setAnchorEl(null)
         setIsRemovingDialogOpen(true)
+    }
+
+    const handleEditDialogOpen = () => {
+        dispatch(hideDetailsDialog())
+        setAnchorEl(null)
+        setIsTaskEditDialogOpen(true)
     }
 
     const handleCloseRemovingDialog = () => {
@@ -137,29 +143,32 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
         setIsTaskEditDialogOpen(false)
     }
 
-    const handleEditDialogOpen = () => {
-        handleClose()
-        setAnchorEl(null)
-        setIsTaskEditDialogOpen(true)
-    }
-
-    const handleStatusChange = (e: SelectChangeEvent) => {
-        updateTaskStatus(new UpdateTaskStatusRequestBody(task.id, status, e.target.value))
-        setStatus(e.target.value)
-    }
-
     const handleCheck = (subtask: Subtask) => () => {
-        updateSubtask({id: subtask.id, body: new UpdateSubtaskRequestDto(subtask.id, !subtask.isCompleted, task.id), columnId: columnId} as UpdateSubtaskType)
+        if(selectedTask) {
+            updateSubtask({id: subtask.id, body: new UpdateSubtaskRequestDto(subtask.id, !subtask.isCompleted, selectedTask.id), columnId: selectedTask.columnId} as UpdateSubtaskType)
+            dispatch(setSelectedTask({...selectedTask, subtasks: selectedTask.subtasks.map((sub) => sub.id === subtask.id ? {...sub, isCompleted: !subtask.isCompleted} : sub )}))
+        }
     }
 
     const handleTaskDelete = () => {
-        deleteTask({id: task.id, columnId: columnId})
-        setIsRemovingDialogOpen(false)
+        if(selectedTask) {
+            deleteTask({id: selectedTask.id, columnId: selectedTask.columnId})
+            setIsRemovingDialogOpen(false)
+        }
+    }
+
+    const handleClose = () => {
+        dispatch(hideDetailsDialog())
+    }
+
+    const handleStatusChange = (e: SelectChangeEvent) => {
+        updateTaskStatus(new UpdateTaskStatusRequestBody(task.id, columnId, e.target.value))
+        dispatch(setSelectedTask({columnId: e.target.value, ...task}))
     }
 
     return (
         <>
-            <Dialog PaperProps={{style: styles.dialogPaper}} onClose={handleClose} open={isOpen}>
+            <Dialog PaperProps={{style: styles.dialogPaper}} onClose={handleClose} open={isDetailsDialogOpen}>
                 <div style={styles.titleSection}>
                     <Typography sx={{flexGrow: '1'}} color={isDarkMode ? 'white' : 'black'} fontSize={22}>{task.title}</Typography>
                     <IconButton onClick={handleMenuClick} sx={{alignSelf: 'flex-start', transform: 'translateX(16px)'}}>
@@ -188,7 +197,7 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
                 </div>
                 <div style={{width: '100%'}}>
                     <Typography sx={{paddingBottom: '0.5em'}} fontSize={14} color={isDarkMode ? 'white': 'black'}>Status</Typography>
-                    <Select onChange={handleStatusChange} value={status} MenuProps={{sx: {'& .MuiPaper-root': {backgroundColor: isDarkMode ? colors.primaryDark : colors.primaryLight, '& li': {color: isDarkMode ? 'white' : 'black'}}}}} IconComponent={KeyboardArrowDown} sx={selectStyle}>
+                    <Select onChange={handleStatusChange} value={columnId} MenuProps={{sx: {'& .MuiPaper-root': {backgroundColor: isDarkMode ? colors.primaryDark : colors.primaryLight, '& li': {color: isDarkMode ? 'white' : 'black'}}}}} IconComponent={KeyboardArrowDown} sx={selectStyle}>
                         {
                             selectedBoard && selectedBoard.columns.map((column) => {
                                 return <MenuItem key={column.id} value={column.id}>{column.name}</MenuItem>
@@ -214,4 +223,6 @@ const DetailsTaskDialog: (props: DetailsTaskDialogProps) => ReactElement = ({isD
             <AddEditTaskDialog parentColumnId={columnId} isOpen={isTaskEditDialogOpen} onClose={handleEditDialogClose} crudOption={CrudOption.Edit} task={task}/>
         </>
     )
+    
+    
 }

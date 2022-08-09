@@ -1,5 +1,8 @@
 import { ButtonBase, Typography } from "@mui/material"
 import React, { ReactElement, useState } from "react"
+import { useDispatch } from "react-redux"
+import { showDetailsDialog } from "../../app/features/isDetailsDialogShown/isDetailsDialogShown"
+import { setSelectedTask } from "../../app/features/selectedTask/slectedTask"
 import { DetailsTaskDialog } from "../molecules/DetailsTaskDialog"
 import { Task } from './../../dto/DTOs'
 export {TodoCard}
@@ -24,14 +27,11 @@ type TodoCardProps = {
 
 const TodoCard = ({task, darkMode, columnId}: TodoCardProps): ReactElement => {
 
-    const [isOpen, setIsOpen] = useState<boolean>(false)
-
-    const handleClose = () => {
-        setIsOpen(false)
-    }
+    const dispatch = useDispatch()
 
     const handleOnClick = () => {
-        setIsOpen(true)
+        dispatch(setSelectedTask({columnId: columnId, ...task}))
+        dispatch(showDetailsDialog())
     }
 
     return (
@@ -46,7 +46,7 @@ const TodoCard = ({task, darkMode, columnId}: TodoCardProps): ReactElement => {
                     </Typography>
                 </div>
             </ButtonBase>
-            <DetailsTaskDialog columnId={columnId} handleClose={handleClose} isOpen={isOpen} task={task} isDarkMode={darkMode}></DetailsTaskDialog>
+            
         </>
     )
 }
