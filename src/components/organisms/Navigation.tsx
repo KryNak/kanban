@@ -170,7 +170,7 @@ const Navigation: () => ReactElement = () => {
             </ul>
         </div>
         <AddEditTaskDialog crudOption={CrudOption.Create} isOpen={isAddTaskDialogOpen} onClose={handleAddTaskDialogClose}/>
-        <RemovingDialog mode={ModelClass.Board} isDarkMode={isDarkMode} isOpen={isRemovingDialogOpen} onClose={handleRemovingDialogClose} onCancel={handleRemovingDialogClose} onDelete={handleDeleteBoard}/>
+        <RemovingDialog mode={ModelClass.Board} isOpen={isRemovingDialogOpen} onClose={handleRemovingDialogClose} onCancel={handleRemovingDialogClose} onDelete={handleDeleteBoard}/>
         <AddEditBoardDialog crudOption={CrudOption.Edit} onClose={handleEditBoardDialogClose} isOpen={isEditBoardDialogOpen}/>
     </>)
 }

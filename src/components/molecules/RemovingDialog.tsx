@@ -2,6 +2,9 @@ import { Dialog, Typography, ButtonBase } from "@mui/material"
 import { CSSProperties, ReactElement } from "react"
 import { ModelClass } from "../../enums"
 import { colors } from '../../colors'
+import { useSelector } from "react-redux"
+import { RootState, useGetBoardByIdQuery } from "../../app/store"
+import { skipToken } from "@reduxjs/toolkit/dist/query"
 
 export { RemovingDialog }
 
@@ -10,11 +13,12 @@ type RemovingDialogProps = {
     isOpen: boolean,
     onDelete: () => void,
     onClose: () => void,
-    onCancel: () => void,
-    isDarkMode: boolean
+    onCancel: () => void
 }
 
-const RemovingDialog: (props: RemovingDialogProps) => ReactElement = ({isDarkMode, mode, isOpen, onDelete, onClose, onCancel}: RemovingDialogProps) => {
+const RemovingDialog: (props: RemovingDialogProps) => ReactElement = ({mode, isOpen, onDelete, onClose, onCancel}: RemovingDialogProps) => {
+
+    const isDarkMode = useSelector((root: RootState) => root.isDarkMode.value)
 
     const styles: {[name: string]: CSSProperties} = {
         dialogPaper: {
@@ -35,16 +39,20 @@ const RemovingDialog: (props: RemovingDialogProps) => ReactElement = ({isDarkMod
         }
     }
 
+    const boardId = useSelector((root: RootState) => root.selectedBoardId.value)
+    const task = useSelector((root: RootState) => root.selectedTask.value)
+    const {data: board} = useGetBoardByIdQuery(boardId ?? skipToken)
+
     return (
         <Dialog PaperProps={{style: styles.dialogPaper}} open={isOpen} onClose={onClose}>
             <Typography color={isDarkMode ? 'white' : 'black'} fontSize={22}>{mode === ModelClass.Board ? 'Delete this board?' : 'Delete this task?'}</Typography>
             <Typography fontSize={14} color={colors.headersGrey}>
                 {
                     mode === ModelClass.Board ? (
-                        `Are you sure you want to delete the "Web Design" Board? This action will remove
+                        `Are you sure you want to delete the "${board?.name}" Board? This action will remove
                         all columns and tasks and cannot be reversed.`
                     ): (
-                        `Are you sure you want to delete the "take coffee break" Task? This action will
+                        `Are you sure you want to delete the "${task?.title}" Task? This action will
                         remove the task and its subtasks and cannot be reversed.`
                     )
                 }
