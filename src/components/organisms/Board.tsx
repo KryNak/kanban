@@ -1,10 +1,12 @@
 import { ButtonBase, Stack, Typography } from "@mui/material"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
-import React, { ReactElement } from "react"
+import React, { ReactElement, useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState, useGetBoardByIdQuery } from "../../app/store"
 import { colors } from "../../colors"
+import { CrudOption } from "../../enums"
 import { KanbanInput } from "../atoms/KanbanInput"
+import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
 import { BoardColumn } from "../molecules/TasksColumn"
 
 export {Board}
@@ -69,6 +71,16 @@ function Board(): React.ReactElement {
         }
     }
 
+    const [isEditBoardDialogOpen, setIsEditBoardDialogOpen] = useState(false)
+
+    const handleEditBoardDialogClose = () => {
+        setIsEditBoardDialogOpen(false)
+    }
+
+    const handleEditBoardDialogOpen = () => {
+        setIsEditBoardDialogOpen(true)
+    }
+
     const boardSelectedContent: ReactElement = (
         <Stack sx={{...styles.horizonalListOfColumns, ...scroll}}>
             {
@@ -78,11 +90,12 @@ function Board(): React.ReactElement {
                     )
                 })
             }
-            <ButtonBase sx={{...styles.addColumn}}>
+            <ButtonBase onClick={handleEditBoardDialogOpen} sx={{...styles.addColumn}}>
                 <Typography fontSize={22} color={'rgba(118,122,134,255)'}>
                     + New Colmun
                 </Typography>
             </ButtonBase>
+            <AddEditBoardDialog crudOption={CrudOption.Edit} onClose={handleEditBoardDialogClose} isOpen={isEditBoardDialogOpen}/>
         </Stack>
     )
 
