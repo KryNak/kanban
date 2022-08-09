@@ -127,7 +127,7 @@ const AddEditTaskDialog = ({isOpen, onClose, crudOption, task, parentColumnId}: 
         if(isOpen) {
             setTimeout(() => {
                 reset()
-            }, 50)
+            }, 20)
 
             setTimeout(() => {
                 if(crudOption === CrudOption.Edit) {
@@ -136,7 +136,7 @@ const AddEditTaskDialog = ({isOpen, onClose, crudOption, task, parentColumnId}: 
                     setValue('statusId', parentColumnId ?? "")
                     setValue('subtasks', task?.subtasks ?? [])
                 }
-            }, 75)
+            }, 25)
         }
     }, [isOpen])
 

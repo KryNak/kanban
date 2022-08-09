@@ -93,10 +93,20 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
     })
 
     useEffect(() => {
-        if(crudOption === CrudOption.Edit && isOpen) {
-            setValue('boardName', selectedBoard?.name ?? '')
-            setValue('columns', selectedBoard?.columns ?? [])
+        if(isOpen) {
+            setTimeout(() => {
+                reset()
+            }, 20)
+
+            setTimeout(() => {
+                if(crudOption === CrudOption.Edit) {
+                    setValue('boardName', selectedBoard?.name ?? '')
+                    setValue('columns', selectedBoard?.columns ?? [])
+                }
+            }, 25)
         }
+
+        
     }, [isOpen])
 
     const { fields, append, remove } = useFieldArray({
@@ -106,7 +116,9 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
 
     const hanldeClose = () => {
         onClose()
-        reset()
+        setTimeout(() => {
+            reset()
+        }, 200)
     }
 
     const handleAppendColumn = () => {
@@ -127,7 +139,9 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
         }
 
         onClose()
-        reset()
+        setTimeout(() => {
+            reset()
+        }, 200)
     };
 
     const content = (
