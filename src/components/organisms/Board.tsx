@@ -1,6 +1,7 @@
 import { ButtonBase, Stack, Typography } from "@mui/material"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
 import React, { ReactElement, useState } from "react"
+import { DragDropContext } from "react-beautiful-dnd"
 import { useSelector } from "react-redux"
 import { RootState, useGetBoardByIdQuery } from "../../app/store"
 import { colors } from "../../colors"
@@ -83,13 +84,16 @@ function Board(): React.ReactElement {
 
     const boardSelectedContent: ReactElement = (
         <Stack sx={{...styles.horizonalListOfColumns, ...scroll}}>
-            {
-                selectedBoard && selectedBoard.columns.map((column) => {
-                    return (
-                        <BoardColumn key={column.id} name={column.name} columnId={column.id} color={'red'} />
-                    )
-                })
-            }
+            <DragDropContext onDragEnd={() => alert('dropped')}>
+                {
+                    selectedBoard && selectedBoard.columns.map((column) => {
+                        return (
+                            <BoardColumn key={column.id} name={column.name} columnId={column.id} color={'red'} />
+                        )
+                    })
+                }
+            </DragDropContext>
+            
             <ButtonBase onClick={handleEditBoardDialogOpen} sx={{...styles.addColumn}}>
                 <Typography fontSize={22} color={'rgba(118,122,134,255)'}>
                     + New Colmun

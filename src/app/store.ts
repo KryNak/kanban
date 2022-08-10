@@ -58,6 +58,22 @@ export class UpdateTaskStatusRequestBody {
 
 }
 
+export class UpdateTaskPosition {
+
+    destinationColumnId: string
+    destinationTaskPosition: number
+    taskId: string
+    sourceColumnId: string
+
+    constructor(destinationColumnId: string, destinationTaskPosition: number, taskId: string, sourceColumnId: string) {
+        this.destinationColumnId = destinationColumnId
+        this.destinationTaskPosition = destinationTaskPosition
+        this.taskId = taskId
+        this.sourceColumnId = sourceColumnId
+    }
+
+}
+
 const kanbanApi = createApi({
     reducerPath: "kanbanApi",
     baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8080/api" }),
@@ -153,6 +169,16 @@ const kanbanApi = createApi({
                 method: 'PUT',
             }),
             invalidatesTags: (result, error, body) => [{type: 'Column', id: body.prevColumnId}, {type: 'Column', id: body.targetColumnId}]
+        }),
+        updateTaskPosition: builder.mutation<void, UpdateTaskPosition>({
+            query: (content) => ({
+                url: `tasks/${content.taskId}/position`,
+                method: 'PUT',
+                body: JSON.stringify(content),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            })
         })
     })
 })
@@ -188,5 +214,6 @@ export const {
     useDeleteTaskByIdMutation,
     useCreateTaskMutation,
     useUpdateTaskMutation,
-    useUpdateTasksStatusMutation
+    useUpdateTasksStatusMutation,
+    useUpdateTaskPositionMutation
 } = kanbanApi
