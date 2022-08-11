@@ -1,12 +1,14 @@
 import { ButtonBase, Stack, Typography } from "@mui/material"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
-import React, { ReactElement, useState } from "react"
-import { DragDropContext } from "react-beautiful-dnd"
+import React, { ReactElement, useEffect, useState } from "react"
+import { DragDropContext, DropResult } from "react-beautiful-dnd"
+import { useDispatch } from "react-redux"
 import { useSelector } from "react-redux"
-import { RootState, useGetBoardByIdQuery } from "../../app/store"
+import { setSelectedBoard } from "../../app/features/selectedBoard/selectedBoardSlice"
+import { RootState, UpdateTaskPosition, useGetBoardByIdQuery, useUpdateTaskPositionMutation } from "../../app/store"
 import { colors } from "../../colors"
+import { Board as BoardModel, Task } from "../../dto/DTOs"
 import { CrudOption } from "../../enums"
-import { KanbanInput } from "../atoms/KanbanInput"
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
 import { BoardColumn } from "../molecules/TasksColumn"
 
@@ -14,10 +16,19 @@ export {Board}
 
 function Board(): React.ReactElement {
 
-    const darkMode = useSelector((state: RootState) => state.isDarkMode.value)
+    const dispatch = useDispatch()
+
+    const darkMode: boolean = useSelector((state: RootState) => state.isDarkMode.value)
+    const selectedBoard: BoardModel | null = useSelector((state: RootState) => state.selectedBoard.value)
     const selectedBoardId: string | null = useSelector((state: RootState) => state.selectedBoardId.value)
 
-    const {data: selectedBoard, isSuccess} = useGetBoardByIdQuery(selectedBoardId ?? skipToken)
+    const [updateTaskPosition] = useUpdateTaskPositionMutation()
+    const {data: fetchedBoard, isSuccess} = useGetBoardByIdQuery(selectedBoardId ?? skipToken)
+
+    useEffect(() => {
+        if(!isSuccess) return;
+        dispatch(setSelectedBoard(fetchedBoard ?? null))
+    }, [JSON.stringify(fetchedBoard)])
 
     const styles: {[name: string]: React.CSSProperties} = {
         horizonalListOfColumns: {
@@ -82,18 +93,71 @@ function Board(): React.ReactElement {
         setIsEditBoardDialogOpen(true)
     }
 
+    const onDragEnd = (result: DropResult) => {
+        if(!selectedBoard) return;
+        const unwrappedBoard: BoardModel = selectedBoard!!
+
+        const { source, destination, draggableId } = result
+
+        const taskId = draggableId
+
+        const destinationPosition = destination?.index ?? source.index
+        const sourcePosition = source.index
+
+        const sourceColumnId = source.droppableId
+        const destinationColumnId = destination?.droppableId ?? sourceColumnId
+        
+        if(sourceColumnId === destinationColumnId) {
+
+            const sourceColumnIndex = unwrappedBoard.columns.findIndex(e => e.id === sourceColumnId)
+            if(sourceColumnIndex === -1) return;
+
+            const newTasksOrder: Task[] = Array.from(unwrappedBoard.columns[sourceColumnIndex].tasks)
+            const [task] = newTasksOrder.splice(sourcePosition, 1)
+            newTasksOrder.splice(destinationPosition, 0, task)
+            
+            const newSelectedBoard = {...unwrappedBoard, columns: unwrappedBoard.columns.map((col, index) => index === sourceColumnIndex ? {...col, tasks: newTasksOrder} : col)}
+            
+            dispatch(setSelectedBoard(newSelectedBoard))
+
+        }
+        else if(sourceColumnId !== destinationColumnId) {
+
+            const sourceColumnIndex = unwrappedBoard.columns.findIndex(e => e.id === sourceColumnId)
+            const destinationColumnIndex = unwrappedBoard.columns.findIndex(e => e.id === destinationColumnId)
+            if(sourceColumnIndex === -1 || destinationColumnIndex === -1) return;
+
+            const columnWithDeletedTask = Array.from(unwrappedBoard.columns[sourceColumnIndex].tasks)
+            const [task] = columnWithDeletedTask.splice(sourcePosition, 1)
+
+            const columnWithAddedTask = Array.from(unwrappedBoard.columns[destinationColumnIndex].tasks)
+            columnWithAddedTask.splice(destinationPosition, 0, task)
+
+            const columnsAfterDrop = Array.from(unwrappedBoard.columns)
+            columnsAfterDrop.splice(sourceColumnIndex, 1, {...unwrappedBoard.columns[sourceColumnIndex], tasks: columnWithDeletedTask})
+            columnsAfterDrop.splice(destinationColumnIndex, 1, {...unwrappedBoard.columns[destinationColumnIndex], tasks: columnWithAddedTask})
+
+            const reformedSelectedBoard = {...unwrappedBoard, columns: columnsAfterDrop}
+
+            dispatch(setSelectedBoard(reformedSelectedBoard))
+
+        }
+        
+        updateTaskPosition(new UpdateTaskPosition(destinationColumnId, destinationPosition, taskId, sourceColumnId))
+            
+    }
+
     const boardSelectedContent: ReactElement = (
         <Stack sx={{...styles.horizonalListOfColumns, ...scroll}}>
-            <DragDropContext onDragEnd={() => alert('dropped')}>
-                {
-                    selectedBoard && selectedBoard.columns.map((column) => {
-                        return (
-                            <BoardColumn key={column.id} name={column.name} columnId={column.id} color={'red'} />
-                        )
-                    })
-                }
+            <DragDropContext onDragEnd={onDragEnd}>
+            {
+                selectedBoard && selectedBoard.columns.map((column) => {
+                    return (
+                        <BoardColumn key={column.id} name={column.name} columnId={column.id} color={'red'} />
+                    )
+                })
+            }
             </DragDropContext>
-            
             <ButtonBase onClick={handleEditBoardDialogOpen} sx={{...styles.addColumn}}>
                 <Typography fontSize={22} color={'rgba(118,122,134,255)'}>
                     + New Colmun
@@ -118,7 +182,7 @@ function Board(): React.ReactElement {
     )
 
     return (
-        selectedBoardId && isSuccess ? boardSelectedContent : boardNotSelectedContent
+        selectedBoard ? boardSelectedContent : boardNotSelectedContent
     )
 
 }

@@ -77,7 +77,7 @@ export class UpdateTaskPosition {
 const kanbanApi = createApi({
     reducerPath: "kanbanApi",
     baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8080/api" }),
-    tagTypes: ["Boards", "Columns", "Column"],
+    tagTypes: ["Boards", "Columns"],
     endpoints: (builder) => ({
         getBoards: builder.query<Board[], void>({
             query: () => "boards",
@@ -116,10 +116,6 @@ const kanbanApi = createApi({
             }),
             invalidatesTags: ["Boards"]
         }),
-        getColumnById: builder.query<Column, string>({
-            query: (id) => `columns/${id}`,
-            providesTags: (result, error, body) => [{type: 'Column', id: result?.id}]
-        }),
         updateSubtaskById: builder.mutation<void, UpdateSubtaskType>({
             query: (arg) => ({
                 url: `subtasks/${arg.id}`,
@@ -129,7 +125,7 @@ const kanbanApi = createApi({
                     'content-type': 'application/json'
                 }
             }),
-            invalidatesTags: (result, error, body) => [{type: 'Column', id: body.columnId}]
+            invalidatesTags: ['Columns']
         }),
         deleteTaskById: builder.mutation<void, DeleteTaskType>({
             query: (body) => ({
@@ -139,7 +135,7 @@ const kanbanApi = createApi({
                     'content-type': 'application/json'
                 }
             }),
-            invalidatesTags: (result, error, body) => [{type: 'Column', id: body.columnId}]
+            invalidatesTags: ['Columns']
         }),
         createTask: builder.mutation<void, CreateTaskType>({
             query: (content) => ({
@@ -150,7 +146,7 @@ const kanbanApi = createApi({
                     'content-type': 'application/json'
                 }
             }),
-            invalidatesTags: (result, error, body) => [{type: 'Column', id: body.columnId}]
+            invalidatesTags: ['Columns']
         }),
         updateTask: builder.mutation<void, UpdateTaskRequestBody>({
             query: (content) => ({
@@ -161,14 +157,14 @@ const kanbanApi = createApi({
                     'content-type': 'application/json'
                 }
             }),
-            invalidatesTags: (result, error, body) => [{type: 'Column', id: body.columnId}, {type: 'Column', id: body.requestBody.columnId}]
+            invalidatesTags: ['Columns']
         }),
         updateTasksStatus: builder.mutation<void, UpdateTaskStatusRequestBody>({
             query: (content) => ({
                 url: `tasks/${content.taskId}/status/${content.targetColumnId}`,
                 method: 'PUT',
             }),
-            invalidatesTags: (result, error, body) => [{type: 'Column', id: body.prevColumnId}, {type: 'Column', id: body.targetColumnId}]
+            invalidatesTags: ['Columns']
         }),
         updateTaskPosition: builder.mutation<void, UpdateTaskPosition>({
             query: (content) => ({
@@ -207,8 +203,7 @@ export const {
     useGetBoardsQuery, 
     useGetBoardByIdQuery, 
     useDeleteBoardByIdMutation, 
-    useCreateBoardMutation, 
-    useGetColumnByIdQuery,
+    useCreateBoardMutation,
     useUpdateBoardByIdMutation,
     useUpdateSubtaskByIdMutation,
     useDeleteTaskByIdMutation,

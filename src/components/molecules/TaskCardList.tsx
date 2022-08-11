@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { TodoCard } from '../atoms/TaskCard'
 import { Stack } from '@mui/material'
 import { useSelector } from 'react-redux'
-import { RootState, UpdateTaskPosition, useGetColumnByIdQuery, useUpdateTaskPositionMutation } from '../../app/store'
-import { skipToken } from '@reduxjs/toolkit/dist/query'
-import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
-import { Column, Task } from '../../dto/DTOs'
+import { RootState } from '../../app/store'
+import { Droppable } from 'react-beautiful-dnd'
 
 export {TodoCardList}
 
@@ -16,16 +14,8 @@ type TodoCardListProp = {
 function TodoCardList({columnId}: TodoCardListProp): React.ReactElement {
 
     const darkMode = useSelector((state: RootState) => state.isDarkMode.value)
-    const {data: column, isSuccess} = useGetColumnByIdQuery(columnId ?? skipToken)
-    const [updateTaskPosition] = useUpdateTaskPositionMutation()
-
-    const [tasks, setTasks] = useState<Task[]>([])
-
-    useEffect(() => {
-        if(isSuccess) {
-            setTasks(column.tasks ?? [])
-        }
-    }, [JSON.stringify(column)])
+    const selectedBoard = useSelector((root: RootState) => root.selectedBoard.value)!!
+    const tasks = selectedBoard?.columns.find(column => column.id === columnId)?.tasks ?? []
 
     const styles: {[name: string]: any} = {
         listStyle: {
@@ -63,39 +53,20 @@ function TodoCardList({columnId}: TodoCardListProp): React.ReactElement {
         }
     }
 
-    // const onDragEnd = (result: DropResult) => {
-    //     const { source, destination, draggableId } = result
-
-    //     const taskId = draggableId
-    //     const destinationPosition = destination?.index ?? source.index
-    //     const sourcePosition = source.index
-    //     const columnId = source.droppableId
-
-    //     setTasks((prev) => {
-    //         const newTasksOrder: Task[] = Array.from(prev)
-    //         const [task] = newTasksOrder.splice(sourcePosition, 1)
-    //         newTasksOrder.splice(destinationPosition, 0, task)
-
-    //         return newTasksOrder
-    //     })
-
-    //     updateTaskPosition(new UpdateTaskPosition(columnId, destinationPosition, taskId, columnId))
-    // }
-
-    return (        
+    return (
         <Droppable droppableId={columnId ?? ""} direction="vertical" type='task'>
-        {provided => (
-            <Stack sx={styles.listStyle} {...provided.droppableProps} ref={provided.innerRef}>
-                {
-                    isSuccess && tasks.map((task, index) => {
-                        return (
-                            <TodoCard index={index} key={task.title} task={task} darkMode={darkMode} columnId={columnId ?? ""}/>
-                        )
-                    })
-                }
-                {provided.placeholder}
-            </Stack>
-        )}
+            {provided => (
+                <Stack sx={styles.listStyle} {...provided.droppableProps} ref={provided.innerRef}>
+                    {
+                        tasks && tasks.map((task, index) => {
+                            return (
+                                <TodoCard index={index} key={task.title} task={task} darkMode={darkMode} columnId={columnId ?? ""}/>
+                            )
+                        })
+                    }
+                    {provided.placeholder}
+                </Stack>
+            )}
         </Droppable>
     )
 }
