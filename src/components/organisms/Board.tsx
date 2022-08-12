@@ -182,7 +182,7 @@ function Board(): React.ReactElement {
     )
 
     return (
-        selectedBoard ? boardSelectedContent : boardNotSelectedContent
+        selectedBoardId ? boardSelectedContent : boardNotSelectedContent
     )
 
 }

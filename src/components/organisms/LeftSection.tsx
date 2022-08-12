@@ -6,7 +6,7 @@ import { AppLogoTitle } from "../molecules/AppLogoTitle"
 import { colors } from '../../colors'
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
 import { CrudOption } from "../../enums"
-import { RootState, useGetBoardsQuery, useGetBoardByIdQuery } from "../../app/store"
+import { RootState, useGetBoardsQuery, useGetBoardByIdQuery, kanbanApi } from "../../app/store"
 import { useDispatch, useSelector } from "react-redux"
 import { hideSideBar, showSideBar } from "../../app/features/isSideBarShown/isSideBarShown"
 import { selectDarkMode, selectLightMode } from "../../app/features/isDarkMode/isDarkModeSlice"
@@ -102,17 +102,6 @@ const LeftSection: () => ReactElement = () => {
 
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        if(isSuccess) {
-            const selectedBoard = data.length > 0 ? data[0] : null
-            dispatch(setSelectedBoardId(selectedBoard?.id ?? null))
-        }
-    }, [isSuccess])
-
-    const isSelected = (id: string): boolean => {
-        return selectedBoardId != null && selectedBoardId === id
-    }
-
     const handleLightModeChange = () => {
         switch (isDarkMode){
             case true:
@@ -144,61 +133,61 @@ const LeftSection: () => ReactElement = () => {
         setIsCreateBoardDialogOpen(true)
     }
 
-    return (<>
-        <div style={{ ...styles.leftSection, width: isSideBarShown ? '300px' : 0, backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)' }}>
-            <AppLogoTitle isDarkMode={isDarkMode} />
+    return (
+        <>
+            <div style={{ ...styles.leftSection, width: isSideBarShown ? '300px' : 0, backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)' }}>
+                <AppLogoTitle isDarkMode={isDarkMode} />
 
-            <div style={styles.boardsAnnounce}>
-                <HeaderTypography>
-                    all boards ({isSuccess ? data.length : 0})
-                </HeaderTypography>
-            </div>
-
-            <List sx={{ padding: 0, minHeight: 'max-content' }}>
-                {isSuccess && data.map((board, index) => {
-                    return (
-                        <ListItem key={index} sx={{ ...styles.boarderListItem }}>
-                            <ListItemButton onClick={handleSelectBoard(board.id)} sx={{ ...styles.boarderListItemButton, '&.Mui-selected': { backgroundColor: 'rgba(99,95,199,255)', minWidth: '280px' }, '&.Mui-selected:hover': { backgroundColor: 'rgba(99,95,199,255)' } }} selected={isSelected(board.id)}>
-                                <ListItemIcon>
-                                    <GridView htmlColor={isSelected(board.id) ? 'white' : 'rgba(118,122,134,255)'} />
-                                </ListItemIcon>
-                                <ListItemText sx={{ '& > span': { color: isSelected(board.id)  ? 'white' : 'rgba(118,122,134,255)' } }} primary={`${board.name}`} />
-                            </ListItemButton>
-                        </ListItem>
-                    )
-                })}
-            </List>
-
-            <ButtonBase onClick={handleCreateBoardDialogOpen} sx={styles.leftSectionElement}>
-                <div style={{ width: '56px', display: 'flex' }}>
-                    <Add htmlColor={colors.violet} />
+                <div style={styles.boardsAnnounce}>
+                    <HeaderTypography>
+                        all boards ({isSuccess ? data.length : 0})
+                    </HeaderTypography>
                 </div>
-                <Typography color={colors.violet}>
-                    Create New Board
-                </Typography>
-            </ButtonBase>
-            <AddEditBoardDialog crudOption={CrudOption.Create} isOpen={isCreateBoardDialogOpen} onClose={handleCreateBoardDialogClose}/>
 
-            <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)' }}>
-                <LightMode htmlColor='rgba(118,122,134,255)' />
-                <Switch checked={isDarkMode} onChange={handleLightModeChange} sx={{ '& .MuiSwitch-switchBase': { '&.Mui-checked': { color: 'rgba(99,95,199,255)', '& + .MuiSwitch-track': { backgroundColor: 'rgba(99,95,199,255)' } } }, }} />
-                <DarkMode htmlColor='rgba(118,122,134,255)' />
-            </div>
+                <List sx={{ padding: 0, minHeight: 'max-content' }}>
+                    {isSuccess && data.map((board, index) => {
+                        return (
+                            <ListItem key={index} sx={{ ...styles.boarderListItem }}>
+                                <ListItemButton onClick={handleSelectBoard(board.id)} sx={{ ...styles.boarderListItemButton, '&.Mui-selected': { backgroundColor: 'rgba(99,95,199,255)', minWidth: '280px' }, '&.Mui-selected:hover': { backgroundColor: 'rgba(99,95,199,255)' } }} selected={selectedBoardId === board.id }>
+                                    <ListItemIcon>
+                                        <GridView htmlColor={selectedBoardId === board.id ? 'white' : 'rgba(118,122,134,255)'} />
+                                    </ListItemIcon>
+                                    <ListItemText sx={{ '& > span': { color: selectedBoardId === board.id ? 'white' : 'rgba(118,122,134,255)' } }} primary={`${board.name}`} />
+                                </ListItemButton>
+                            </ListItem>
+                        )
+                    })}
+                </List>
 
+                <ButtonBase onClick={handleCreateBoardDialogOpen} sx={styles.leftSectionElement}>
+                    <div style={{ width: '56px', display: 'flex' }}>
+                        <Add htmlColor={colors.violet} />
+                    </div>
+                    <Typography color={colors.violet}>
+                        Create New Board
+                    </Typography>
+                </ButtonBase>
+                <AddEditBoardDialog crudOption={CrudOption.Create} isOpen={isCreateBoardDialogOpen} onClose={handleCreateBoardDialogClose}/>
 
-            
-            <ButtonBase onClick={handleHideSideMenu} sx={{...styles.leftSectionElement, marginTop: '1em', marginBottom: '3em'}}>
-                <div style={{ width: '56px', display: 'flex' }}>
-                    <VisibilityOff htmlColor={colors.headersGrey} />
+                <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)' }}>
+                    <LightMode htmlColor='rgba(118,122,134,255)' />
+                    <Switch checked={isDarkMode} onChange={handleLightModeChange} sx={{ '& .MuiSwitch-switchBase': { '&.Mui-checked': { color: 'rgba(99,95,199,255)', '& + .MuiSwitch-track': { backgroundColor: 'rgba(99,95,199,255)' } } }, }} />
+                    <DarkMode htmlColor='rgba(118,122,134,255)' />
                 </div>
-                <Typography color={colors.headersGrey}>
-                    Hide Sidebar
-                </Typography>
-            </ButtonBase>
+                
+                <ButtonBase onClick={handleHideSideMenu} sx={{...styles.leftSectionElement, marginTop: '1em', marginBottom: '3em'}}>
+                    <div style={{ width: '56px', display: 'flex' }}>
+                        <VisibilityOff htmlColor={colors.headersGrey} />
+                    </div>
+                    <Typography color={colors.headersGrey}>
+                        Hide Sidebar
+                    </Typography>
+                </ButtonBase>
 
-        </div>
-        <ButtonBase onClick={handleShowSideMenu} sx={styles.visibilityOnButton}>
-            <Visibility htmlColor='white' />
-        </ButtonBase>
-    </>)
+            </div>
+            <ButtonBase onClick={handleShowSideMenu} sx={styles.visibilityOnButton}>
+                <Visibility htmlColor='white' />
+            </ButtonBase>
+        </>
+    )
 }
