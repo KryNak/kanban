@@ -6,5 +6,7 @@ const colors = {
     secondaryDark: 'rgba(34,33,45,255)',
     secondaryLight: 'rgba(245,247,254,255)',
     primaryLight: 'rgba(255, 255, 255, 255)',
-    headersGrey: 'rgba(118,122,134,255)'
+    headersGrey: 'rgba(118,122,134,255)',
+    disabledBackground: 'rgba(59,59,97,255)',
+    disabledColor: 'rgba(105,107,115,255)'
 }
