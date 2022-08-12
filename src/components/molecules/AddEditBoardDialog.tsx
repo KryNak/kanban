@@ -153,7 +153,7 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
                     helperText={errors.boardName?.message}
                     multiline={false} 
                     label="Name" 
-                    placeholder="e.g. Take coffee break" 
+                    placeholder="e.g. Roadmap" 
                     darkMode={isDarkMode}
                 />
                 <FormControl sx={{width: '100%'}} error={errors.columns ? true: false}>

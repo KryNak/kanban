@@ -1,4 +1,4 @@
-import { ButtonBase, Dialog, FormControl, FormHelperText, IconButton, List, ListItem, MenuItem, Select, TextField, Typography } from "@mui/material"
+import { ButtonBase, Dialog, FormControl, FormHelperText, IconButton, InputLabel, List, ListItem, MenuItem, Select, TextField, Typography } from "@mui/material"
 import { CSSProperties, useEffect } from "react"
 import { useSelector } from "react-redux"
 import { CreateTaskType, RootState, UpdateTaskRequestBody, useCreateTaskMutation, useGetBoardByIdQuery, useUpdateTaskMutation } from "../../app/store"
@@ -201,7 +201,7 @@ const AddEditTaskDialog = ({isOpen, onClose, crudOption, task, parentColumnId}: 
                                         props={register(`subtasks.${index}.title`)}
                                         error={errors.subtasks?.[index]?.title ? true : false} 
                                         helperText={errors.subtasks?.[index]?.title?.message}
-                                        placeholder={'e.g. Todo'} 
+                                        placeholder={'e.g. Make coffee'} 
                                         multiline={false} 
                                         darkMode={isDarkMode}
                                     />
@@ -231,7 +231,11 @@ const AddEditTaskDialog = ({isOpen, onClose, crudOption, task, parentColumnId}: 
                                     sx={selectStyle}
                                     onChange={field.onChange} 
                                     value={field.value}
+                                    displayEmpty
                                 >
+                                    <MenuItem disabled value="">
+                                        <em>Select status</em>
+                                    </MenuItem>
                                     {
                                         selectedBoard && selectedBoard.columns.map((column) => {
                                             return <MenuItem key={column.id} value={column.id}>{column.name}</MenuItem>
