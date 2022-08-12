@@ -143,7 +143,7 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
         }, 200)
     };
 
-    const content = (
+    return (
         <Dialog PaperProps={{style: styles.dialogPaper}} onClose={hanldeClose} open={isOpen}>
             <form style={styles.formStyle}>
                 <Typography color={isDarkMode ? 'white' : 'black'} fontSize={22}>{crudOption === CrudOption.Create ? 'Add New Board' : 'Edit Board'}</Typography>
@@ -183,11 +183,5 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
                 <ButtonBase onClick={handleSubmit(onSubmit)} sx={styles.dialogButton}>{crudOption === CrudOption.Create ? 'Create New Board' : 'Update Board'}</ButtonBase>
             </form>
         </Dialog>
-    )
-
-    return (
-        
-        isSuccess ? content : <div/>
-        
     )
 }

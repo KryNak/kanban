@@ -5,7 +5,7 @@ import { isDarkModeReducer } from "./features/isDarkMode/isDarkModeSlice"
 import { isDetailsDialogOpenSliceReducer } from "./features/isDetailsDialogShown/isDetailsDialogShown"
 import { isSideBarSliceReducer } from "./features/isSideBarShown/isSideBarShown"
 import { selectedBoardSliceReducer } from "./features/selectedBoard/selectedBoardSlice"
-import { selectedBoardIdSliceReducer } from "./features/selectedBoardId/selectedBoardId"
+import { selectedBoardIdSliceReducer, setSelectedBoardId } from "./features/selectedBoardId/selectedBoardId"
 import { selectedTaskSliceReducer } from "./features/selectedTask/slectedTask"
 export { store }
 
@@ -74,14 +74,20 @@ export class UpdateTaskPosition {
 
 }
 
-const kanbanApi = createApi({
+export const kanbanApi = createApi({
     reducerPath: "kanbanApi",
     baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8080/api" }),
     tagTypes: ["Boards", "Columns"],
     endpoints: (builder) => ({
         getBoards: builder.query<Board[], void>({
             query: () => "boards",
-            providesTags: ['Boards']
+            providesTags: ['Boards'],
+            async onQueryStarted(arg, api) {
+                const queryResult = await api.queryFulfilled
+                if(queryResult.data.length > 0 && store.getState().selectedBoardId.value == null){
+                    store.dispatch(setSelectedBoardId(queryResult.data[0].id))
+                }
+            }
         }),
         getBoardById: builder.query<Board, string>({
             query: (id) => `boards/${id}`,
