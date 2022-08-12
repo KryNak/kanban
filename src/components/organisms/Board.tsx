@@ -173,11 +173,12 @@ function Board(): React.ReactElement {
                 There are no boards yet!<br/>
                 Please create one.
             </Typography>
-            <ButtonBase sx={{backgroundColor: colors.violet, padding: '10px 20px', borderRadius: '25px', whiteSpace: 'nowrap'}}>
+            <ButtonBase onClick={handleEditBoardDialogOpen} sx={{backgroundColor: colors.violet, padding: '10px 20px', borderRadius: '25px', whiteSpace: 'nowrap'}}>
                 <Typography fontSize={14} color={'white'}>
                     Create Board
                 </Typography>
             </ButtonBase>
+            <AddEditBoardDialog crudOption={CrudOption.Create} onClose={handleEditBoardDialogClose} isOpen={isEditBoardDialogOpen}/>
         </div>
     )
 
