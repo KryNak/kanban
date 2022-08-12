@@ -9,6 +9,8 @@ import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
 import { RootState, useDeleteBoardByIdMutation, useGetBoardByIdQuery, useGetBoardsQuery } from "../../app/store"
 import { useSelector } from "react-redux"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
+import { setSelectedBoardId } from "../../app/features/selectedBoardId/selectedBoardId"
+import { useDispatch } from "react-redux"
 
 export{Navigation}
 
@@ -49,6 +51,8 @@ const styles: {[name: string]: CSSProperties} = {
 }
 
 const Navigation: () => ReactElement = () => {
+
+    const dispatch = useDispatch()
 
     const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState<boolean>(false)
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
@@ -102,6 +106,7 @@ const Navigation: () => ReactElement = () => {
     const handleDeleteBoard = () => {
         if(selectedBoardId) {
             deleteBoardById(selectedBoardId)
+            dispatch(setSelectedBoardId(null))
         }
         setIsRemovingDialogOpen(false)
     }

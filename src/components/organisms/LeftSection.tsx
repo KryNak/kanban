@@ -109,9 +109,11 @@ const LeftSection: () => ReactElement = () => {
         }
     }, [isSuccess])
 
-    const isSelected = (id: string): boolean => {
-        return selectedBoardId != null && selectedBoardId === id
-    }
+    useEffect(() => {
+        if(selectedBoardId == null && isSuccess) {
+            dispatch(setSelectedBoardId(data[0]?.id ?? null))
+        }
+    }, [selectedBoardId])
 
     const handleLightModeChange = () => {
         switch (isDarkMode){
@@ -158,11 +160,11 @@ const LeftSection: () => ReactElement = () => {
                 {isSuccess && data.map((board, index) => {
                     return (
                         <ListItem key={index} sx={{ ...styles.boarderListItem }}>
-                            <ListItemButton onClick={handleSelectBoard(board.id)} sx={{ ...styles.boarderListItemButton, '&.Mui-selected': { backgroundColor: 'rgba(99,95,199,255)', minWidth: '280px' }, '&.Mui-selected:hover': { backgroundColor: 'rgba(99,95,199,255)' } }} selected={isSelected(board.id)}>
+                            <ListItemButton onClick={handleSelectBoard(board.id)} sx={{ ...styles.boarderListItemButton, '&.Mui-selected': { backgroundColor: 'rgba(99,95,199,255)', minWidth: '280px' }, '&.Mui-selected:hover': { backgroundColor: 'rgba(99,95,199,255)' } }} selected={selectedBoardId === board.id }>
                                 <ListItemIcon>
-                                    <GridView htmlColor={isSelected(board.id) ? 'white' : 'rgba(118,122,134,255)'} />
+                                    <GridView htmlColor={selectedBoardId === board.id ? 'white' : 'rgba(118,122,134,255)'} />
                                 </ListItemIcon>
-                                <ListItemText sx={{ '& > span': { color: isSelected(board.id)  ? 'white' : 'rgba(118,122,134,255)' } }} primary={`${board.name}`} />
+                                <ListItemText sx={{ '& > span': { color: selectedBoardId === board.id ? 'white' : 'rgba(118,122,134,255)' } }} primary={`${board.name}`} />
                             </ListItemButton>
                         </ListItem>
                     )
