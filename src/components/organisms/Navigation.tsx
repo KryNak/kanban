@@ -132,14 +132,14 @@ const Navigation: () => ReactElement = () => {
                     </Typography>
                 </li>
                 <li style={{...styles.endItems}}>
-                    <ButtonBase disabled={selectedBoardId ? false : true} disabled={selectedBoardId ? false : true} onClick={handleAddTaskDialogOpen} sx={styles.addButton}>
+                    <ButtonBase disabled={selectedBoardId ? false : true} onClick={handleAddTaskDialogOpen} sx={styles.addButton}>
                         <Typography fontSize={'12px'}>
                             + Add New Task
                         </Typography>
                     </ButtonBase>
                 </li>
                 <li>
-                    <IconButton sx={{...styles.moreButton}} disabled={selectedBoardId ? false : true} sx={{...styles.moreButton}} disabled={selectedBoardId ? false : true} onClick={handleMenuClick}>
+                    <IconButton sx={{...styles.moreButton}} disabled={selectedBoardId ? false : true} onClick={handleMenuClick}>
                         <MoreVert htmlColor={colors.violet} />
                     </IconButton>
                     <Menu anchorEl={anchorEl}
