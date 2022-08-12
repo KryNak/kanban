@@ -14,7 +14,7 @@ import { useDispatch } from "react-redux"
 
 export{Navigation}
 
-const styles: {[name: string]: CSSProperties} = {
+const styles: {[name: string]: any} = {
     navigation: {
         height: '80px',
         width: '100%',
@@ -42,11 +42,19 @@ const styles: {[name: string]: CSSProperties} = {
         backgroundColor: colors.violet,
         padding: '10px 20px',
         borderRadius: '25px',
-        whiteSpace: 'nowrap'
+        whiteSpace: 'nowrap',
+        '&[disabled]': {
+            opacity: '0.6'
+        }
     },
     navTitle: {
         fontSize: '20px',
         whiteSpace: 'nowrap'
+    },
+    moreButton: {
+        '&[disabled] svg': {
+            opacity: '0.6'
+        }
     }
 }
 
@@ -124,14 +132,14 @@ const Navigation: () => ReactElement = () => {
                     </Typography>
                 </li>
                 <li style={{...styles.endItems}}>
-                    <ButtonBase onClick={handleAddTaskDialogOpen} sx={styles.addButton}>
+                    <ButtonBase disabled={selectedBoardId ? false : true} onClick={handleAddTaskDialogOpen} sx={styles.addButton}>
                         <Typography fontSize={'12px'}>
                             + Add New Task
                         </Typography>
                     </ButtonBase>
                 </li>
                 <li>
-                    <IconButton onClick={handleMenuClick}>
+                    <IconButton sx={{...styles.moreButton}} disabled={selectedBoardId ? false : true} onClick={handleMenuClick}>
                         <MoreVert htmlColor={colors.violet} />
                     </IconButton>
                     <Menu anchorEl={anchorEl}
