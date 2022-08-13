@@ -17,13 +17,15 @@ export class Column {
     id: string
     name: string
     tasks: Task[]
-    position?: number
+    position: number
+    color: string
 
-    constructor(id: string, name: string, tasks: Task[], position?: number){
+    constructor(id: string, name: string, tasks: Task[], position: number, color: string){
         this.name = name
         this.tasks = tasks
         this.id = id
         this.position = position
+        this.color = color
     }
 
 }

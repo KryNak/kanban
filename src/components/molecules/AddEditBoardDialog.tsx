@@ -122,7 +122,7 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
     }
 
     const handleAppendColumn = () => {
-        append(new Column('', '', [], fields.length + 1))
+        append(new Column('', '', [], fields.length + 1, ''))
     }
 
     const handleRemoveColumn = (index: number) => () => {
@@ -134,7 +134,7 @@ const AddEditBoardDialog: (props: AddEditBoardDialogProps) => ReactElement = ({o
             createBoard(new CreateBoardRequestDto(data.boardName, data.columns.map((e, index) => new ColumnDto(e.name, index))))
         }
         else if(crudOption === CrudOption.Edit && selectedBoardId) {
-            updateBoard({id: selectedBoardId, body: new UpdateBoardRequestDto(selectedBoardId, data.boardName, data.columns.map((e, index) => new Column(e.id, e.name, e.tasks, index)))} as UpdateBoardType)
+            updateBoard({id: selectedBoardId, body: new UpdateBoardRequestDto(selectedBoardId, data.boardName, data.columns.map((e, index) => new Column(e.id, e.name, e.tasks, index, e.color)))} as UpdateBoardType)
         }
 
         onClose()

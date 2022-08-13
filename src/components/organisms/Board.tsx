@@ -153,7 +153,7 @@ function Board(): React.ReactElement {
             {
                 selectedBoard && selectedBoard.columns.map((column) => {
                     return (
-                        <BoardColumn key={column.id} name={column.name} columnId={column.id} color={'red'} />
+                        <BoardColumn key={column.id} name={column.name} columnId={column.id} color={column.color} />
                     )
                 })
             }
