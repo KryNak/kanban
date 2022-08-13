@@ -123,6 +123,11 @@ const AddEditTaskDialog = ({isOpen, onClose, crudOption, task, parentColumnId}: 
         }
     })
 
+    const { fields, append, remove, replace } = useFieldArray({
+        control,
+        name: 'subtasks'
+    });
+
     useEffect(() => {
         if(isOpen) {
             setTimeout(() => {
@@ -134,16 +139,11 @@ const AddEditTaskDialog = ({isOpen, onClose, crudOption, task, parentColumnId}: 
                     setValue('title', task?.title ?? "")
                     setValue('description', task?.description ?? "")
                     setValue('statusId', parentColumnId ?? "")
-                    setValue('subtasks', task?.subtasks ?? [])
+                    replace(task?.subtasks ?? [])
                 }
             }, 25)
         }
     }, [isOpen])
-
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: 'subtasks'
-    });
 
     const onSubmit = (data: FormProps) => {
         if(crudOption === CrudOption.Create) {
