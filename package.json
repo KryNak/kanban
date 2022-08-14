@@ -56,8 +56,5 @@
     "@faker-js/faker": "^7.3.0",
     "@types/node": "^18.7.3",
     "@types/react-beautiful-dnd": "^13.1.2"
-  },
-  "engines": {
-
   }
 }
