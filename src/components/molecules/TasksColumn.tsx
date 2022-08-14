@@ -1,5 +1,4 @@
 import React from 'react'
-import { Task } from '../../dto/DTOs'
 import { ColumnHeader } from './TasksColumnHeader'
 import { TodoCardList } from './TaskCardList'
 export { BoardColumn }

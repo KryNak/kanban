@@ -1,13 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery, setupListeners } from "@reduxjs/toolkit/query/react"
-import { Board, Column, CreateBoardRequestDto, CreateTaskRequestDto, Subtask, UpdateBoardRequestDto, UpdateSubtaskRequestDto, UpdateTaskRequestDto } from "../dto/DTOs"
+import { Board, CreateBoardRequestDto, CreateTaskRequestDto, UpdateBoardRequestDto, UpdateSubtaskRequestDto, UpdateTaskRequestDto } from "../dto/DTOs"
 import { isDarkModeReducer } from "./features/isDarkMode/isDarkModeSlice"
 import { isDetailsDialogOpenSliceReducer } from "./features/isDetailsDialogShown/isDetailsDialogShown"
 import { isSideBarSliceReducer } from "./features/isSideBarShown/isSideBarShown"
 import { selectedBoardSliceReducer } from "./features/selectedBoard/selectedBoardSlice"
 import { selectedBoardIdSliceReducer, setSelectedBoardId } from "./features/selectedBoardId/selectedBoardId"
 import { selectedTaskSliceReducer } from "./features/selectedTask/slectedTask"
-export { store }
 
 export type UpdateBoardType = {
     id: string, 
@@ -76,7 +75,7 @@ export class UpdateTaskPosition {
 
 export const kanbanApi = createApi({
     reducerPath: "kanbanApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8080/api" }),
+    baseQuery: fetchBaseQuery({ baseUrl: `${process.env.REACT_APP_BACKEND_URL}/api` }),
     tagTypes: ["Boards", "Columns"],
     endpoints: (builder) => ({
         getBoards: builder.query<Board[], void>({
@@ -185,7 +184,7 @@ export const kanbanApi = createApi({
     })
 })
 
-const store = configureStore({
+export const store = configureStore({
     reducer: {
         [kanbanApi.reducerPath]: kanbanApi.reducer,
         selectedBoard: selectedBoardSliceReducer,

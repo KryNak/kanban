@@ -6,11 +6,12 @@ import { AppLogoTitle } from "../molecules/AppLogoTitle"
 import { colors } from '../../colors'
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
 import { CrudOption } from "../../enums"
-import { RootState, useGetBoardsQuery, useGetBoardByIdQuery, kanbanApi } from "../../app/store"
+import { RootState, useGetBoardsQuery, useGetBoardByIdQuery, kanbanApi, store } from "../../app/store"
 import { useDispatch, useSelector } from "react-redux"
 import { hideSideBar, showSideBar } from "../../app/features/isSideBarShown/isSideBarShown"
 import { selectDarkMode, selectLightMode } from "../../app/features/isDarkMode/isDarkModeSlice"
 import { setSelectedBoardId } from "../../app/features/selectedBoardId/selectedBoardId"
+import { skipToken } from "@reduxjs/toolkit/dist/query"
 export {LeftSection}
 
 const styles: {[name: string]: CSSProperties} = {
@@ -99,6 +100,7 @@ const LeftSection: () => ReactElement = () => {
     const isSideBarShown: boolean = useSelector((state: RootState) => state.isSideBarShown.value)
 
     const {data, isSuccess} = useGetBoardsQuery()
+    const { refetch } = useGetBoardByIdQuery(selectedBoardId ?? skipToken)
 
     const dispatch = useDispatch()
 
@@ -115,6 +117,7 @@ const LeftSection: () => ReactElement = () => {
 
     const handleSelectBoard = (id: string) => () => {
         dispatch(setSelectedBoardId(id))
+        refetch()
     }
 
     const handleHideSideMenu = () => {

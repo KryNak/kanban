@@ -1,6 +1,5 @@
-import { DarkMode } from "@mui/icons-material"
 import { TextField, Typography } from "@mui/material"
-import { ChangeEventHandler, CSSProperties, HtmlHTMLAttributes, ReactElement } from "react"
+import { ChangeEventHandler, ReactElement } from "react"
 import { colors } from "../../colors"
 export {KanbanInput}
 

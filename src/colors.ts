@@ -1,6 +1,4 @@
-export {colors}
-
-const colors = {
+export const colors = {
     violet: 'rgba(99,95,199,255)',
     primaryDark: 'rgba(44,44,56,255)',
     secondaryDark: 'rgba(34,33,45,255)',

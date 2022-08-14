@@ -1,9 +1,7 @@
-export {ModelClass, CrudOption}
-
-enum ModelClass {
+export enum ModelClass {
     Board, Task
 }
 
-enum CrudOption {
+export enum CrudOption {
     Edit, Create
 }
