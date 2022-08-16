@@ -3,7 +3,9 @@ import { createApi, fetchBaseQuery, setupListeners } from "@reduxjs/toolkit/quer
 import { Board, CreateBoardRequestDto, CreateTaskRequestDto, UpdateBoardRequestDto, UpdateSubtaskRequestDto, UpdateTaskRequestDto } from "../dto/DTOs"
 import { isDarkModeReducer } from "./features/isDarkMode/isDarkModeSlice"
 import { isDetailsDialogOpenSliceReducer } from "./features/isDetailsDialogShown/isDetailsDialogShown"
+import { isMobileViewModeReducer } from "./features/isMobileViewMode/isMobileViewModel"
 import { isSideBarSliceReducer } from "./features/isSideBarShown/isSideBarShown"
+import { isTabletViewModeReducer } from "./features/isTabletViewModel/isTabletViewMode"
 import { selectedBoardSliceReducer } from "./features/selectedBoard/selectedBoardSlice"
 import { selectedBoardIdSliceReducer, setSelectedBoardId } from "./features/selectedBoardId/selectedBoardId"
 import { selectedTaskSliceReducer } from "./features/selectedTask/slectedTask"
@@ -192,7 +194,9 @@ export const store = configureStore({
         isSideBarShown: isSideBarSliceReducer,
         selectedBoardId: selectedBoardIdSliceReducer,
         selectedTask: selectedTaskSliceReducer,
-        isDetailsDialogOpen: isDetailsDialogOpenSliceReducer
+        isDetailsDialogOpen: isDetailsDialogOpenSliceReducer,
+        isMobileViewMode: isMobileViewModeReducer,
+        isTabletViewMode: isTabletViewModeReducer
     },
     middleware: (getDefaultMiddleware) => {
         return getDefaultMiddleware().concat(kanbanApi.middleware)
