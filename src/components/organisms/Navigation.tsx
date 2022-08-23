@@ -1,4 +1,4 @@
-import { MoreVert } from "@mui/icons-material"
+import { Add, ArrowDownward, ArrowDropDown, ArrowDropUp, ArrowUpward, CoronavirusSharp, MoreVert } from "@mui/icons-material"
 import { ButtonBase, IconButton, Menu, MenuItem, Typography } from "@mui/material"
 import { ReactElement, useState } from "react"
 import { AddEditTaskDialog } from "../molecules/AddEditTaskDialog"
@@ -11,6 +11,9 @@ import { useSelector } from "react-redux"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
 import { setSelectedBoardId } from "../../app/features/selectedBoardId/selectedBoardId"
 import { useDispatch } from "react-redux"
+import { hideSideBar, showSideBar } from "../../app/features/isSideBarShown/isSideBarShown"
+import { AppLogoTitle } from "../molecules/AppLogoTitle"
+import { Logo } from "../atoms/Logo"
 
 export{Navigation}
 
@@ -18,7 +21,6 @@ const styles: {[name: string]: any} = {
     navigation: {
         height: '80px',
         width: '100%',
-        minWidth: '500px',
         transition: 'background-color .5s, border-left-color .5s',
         borderLeft: '1px solid'
     },
@@ -49,7 +51,10 @@ const styles: {[name: string]: any} = {
     },
     navTitle: {
         fontSize: '20px',
-        whiteSpace: 'nowrap'
+        whiteSpace: 'nowrap',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
     },
     moreButton: {
         '&[disabled] svg': {
@@ -69,6 +74,10 @@ const Navigation: () => ReactElement = () => {
 
     const selectedBoardId = useSelector((state: RootState) => state.selectedBoardId.value)
     const isDarkMode = useSelector((state: RootState) => state.isDarkMode.value)
+    const isSideBarShown = useSelector((state: RootState) => state.isSideBarShown.value)
+    const isMobileViewMode = useSelector((root: RootState) => root.isMobileViewMode.value)
+    const isTabletViewMode = useSelector((root: RootState) => root.isTabletViewMode.value)
+
     const [deleteBoardById] = useDeleteBoardByIdMutation()
 
     const {data, isSuccess} = useGetBoardByIdQuery(selectedBoardId ?? skipToken)
@@ -127,16 +136,42 @@ const Navigation: () => ReactElement = () => {
             }}>
             <ul style={{...styles.navOptions}}>
                 <li style={styles.navTitle}>
-                    <Typography sx={{transition: 'color .5s'}} color={isDarkMode ? 'white' : 'black'} fontSize={'20px'}>
+                    {
+                        isMobileViewMode && (
+                            <Logo/>
+                        )
+                    }
+                    <Typography sx={{transition: 'color .5s', textOverflow: 'ellipsis', width: 'max-content', maxWidth: '200px', overflow: 'hidden', paddingLeft: '1em'}} color={isDarkMode ? 'white' : 'black'} fontSize={'20px'}>
                         {board?.name}
                     </Typography>
+                    {
+                        isMobileViewMode && (
+                            isSideBarShown ? (
+                                <IconButton onClick={() => dispatch(isSideBarShown ? hideSideBar() : showSideBar())} sx={{marginLeft: '0.5em', width: '30px', height: '30px'}}>
+                                    <ArrowDropUp htmlColor={colors.violet}/>
+                                </IconButton>
+                            ) : (
+                                <IconButton onClick={() => dispatch(isSideBarShown ? hideSideBar() : showSideBar())} sx={{marginLeft: '0.5em', width: '30px', height: '30px'}}>
+                                    <ArrowDropDown htmlColor={colors.violet}/>
+                                </IconButton>
+                            )
+                        )
+                    }
                 </li>
                 <li style={{...styles.endItems}}>
-                    <ButtonBase disabled={selectedBoardId ? false : true} onClick={handleAddTaskDialogOpen} sx={styles.addButton}>
-                        <Typography fontSize={'12px'}>
-                            + Add New Task
-                        </Typography>
-                    </ButtonBase>
+                    {
+                        isTabletViewMode ? (
+                            <IconButton onClick={handleAddTaskDialogOpen} sx={{backgroundColor: colors.violet, color: colors.violet, padding: '10px 15px', height: '40px', borderRadius: '25px', '&:hover': {backgroundColor: colors.violet}}}>
+                                <Add htmlColor={colors.primaryLight}/>
+                            </IconButton>
+                        ): (
+                            <ButtonBase disabled={selectedBoardId ? false : true} onClick={handleAddTaskDialogOpen} sx={styles.addButton}>
+                                <Typography fontSize={'12px'}>
+                                    + Add New Task
+                                </Typography>
+                            </ButtonBase>
+                        )
+                    }
                 </li>
                 <li>
                     <IconButton sx={{...styles.moreButton}} disabled={selectedBoardId ? false : true} onClick={handleMenuClick}>

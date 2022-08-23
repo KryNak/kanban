@@ -1,5 +1,5 @@
 import { Add, DarkMode, GridView, LightMode, Visibility, VisibilityOff } from "@mui/icons-material"
-import { ButtonBase, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
+import { ButtonBase, Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
 import { CSSProperties, ReactElement, useEffect, useState } from "react"
 import { HeaderTypography } from "../atoms/HeaderTypography"
 import { AppLogoTitle } from "../molecules/AppLogoTitle"
@@ -14,83 +14,6 @@ import { setSelectedBoardId } from "../../app/features/selectedBoardId/selectedB
 import { skipToken } from "@reduxjs/toolkit/dist/query"
 export {LeftSection}
 
-const styles: {[name: string]: CSSProperties} = {
-    leftSection: {
-        top: 0,
-        left: 0,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        width: '300px',
-        position: 'fixed',
-        overflowX: 'hidden',
-        transition: 'width .5s, background-color .5s',
-        zIndex: 2
-    },
-    boardsAnnounce: {
-        marginLeft: '1.5em',
-        height: '50px',
-        display: 'flex',
-        alignItems: 'center',
-        whiteSpace: 'nowrap',
-        flexShrink: 0
-    },
-    boards: {
-        paddingLeft: '1.5em',
-        listStyle: 'none',
-        flexShrink: 0
-    },
-    boarderListItemButton: {
-        padding: '5px 0 5px 1.5em',
-        borderRadius: '0 50px 50px 0',
-        flexShrink: 0
-    },
-    boarderListItem: {
-        padding: '0px',
-        width: 'calc(100% - 20px)',
-        borderRadius: '0 50px 50px 0',
-        marginBottom: '5px',
-        marginTop: '5px',
-        flexShrink: 0
-    },
-    themeMode: {
-        marginTop: 'auto',
-        marginLeft: '1.5em',
-        width: 'calc(100% - 3em)',
-        borderRadius: '5px',
-        minHeight: '50px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        resize: 'none',
-        minWidth: '252px',
-        transition: 'background-color .5s'
-    },
-    leftSectionElement: {
-        display: 'flex',
-        justifyContent: 'flex-start',
-        padding: '5px 0 5px calc(1.5em + 4px)',
-        height: '42px',
-        width: 'calc(100% - 20px)',
-        minWidth: '280px',
-        borderRadius: '0 50px 50px 0'
-    },
-    visibilityOnButton: {
-        display: 'flex',
-        justifyContent: 'center',
-        padding: '5px 0 5px 0',
-        height: '42px',
-        width: '50px',
-        borderRadius: '0 50px 50px 0',
-        position: 'fixed',
-        left: '0',
-        bottom: '3em',
-        backgroundColor: colors.violet,
-        zIndex: 1
-    }
-}
-
-
 const LeftSection: () => ReactElement = () => {
 
     const [isCreateBoardDialogOpen, setIsCreateBoardDialogOpen] = useState<boolean>(false)
@@ -98,6 +21,94 @@ const LeftSection: () => ReactElement = () => {
     const selectedBoardId: string | null = useSelector((state: RootState) => state.selectedBoardId.value)
     const isDarkMode: boolean = useSelector((state: RootState) => state.isDarkMode.value)
     const isSideBarShown: boolean = useSelector((state: RootState) => state.isSideBarShown.value)
+    const isMobileViewMode: boolean = useSelector((state: RootState) => state.isMobileViewMode.value)
+
+    const styles: {[name: string]: CSSProperties} = {
+        leftSection: {
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            width: isSideBarShown ? '300px' : '0px',
+            overflowX: 'hidden',
+            position: 'relative',
+            zIndex: 2,
+            backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)',
+            transition: 'background-color 0.5s, width 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
+        },
+        mobileMenu: {
+            height: isSideBarShown ? 'calc(100% - 80px)' : '0px',
+            width: '100%',
+            overflowX: 'hidden',
+            position: 'absolute',
+            backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)',
+            transition: 'background-color 0.5s, height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+            top: '80px',
+            display: 'flex',
+            flexDirection: 'column',
+            zIndex: 2
+        },
+        boardsAnnounce: {
+            marginLeft: '1.5em',
+            height: '50px',
+            display: 'flex',
+            alignItems: 'center',
+            whiteSpace: 'nowrap',
+            flexShrink: 0
+        },
+        boards: {
+            paddingLeft: '1.5em',
+            listStyle: 'none',
+            flexShrink: 0
+        },
+        boarderListItemButton: {
+            padding: '5px 0 5px 1.5em',
+            borderRadius: '0 50px 50px 0',
+            flexShrink: 0
+        },
+        boarderListItem: {
+            padding: '0px',
+            width: 'calc(100% - 20px)',
+            borderRadius: '0 50px 50px 0',
+            marginBottom: '5px',
+            marginTop: '5px',
+            flexShrink: 0
+        },
+        themeMode: {
+            marginTop: 'auto',
+            marginLeft: '1.5em',
+            width: 'calc(100% - 3em)',
+            borderRadius: '5px',
+            minHeight: '50px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            resize: 'none',
+            minWidth: '252px',
+            transition: 'background-color .5s'
+        },
+        leftSectionElement: {
+            display: 'flex',
+            justifyContent: 'flex-start',
+            padding: '5px 0 5px calc(1.5em + 4px)',
+            height: '42px',
+            width: 'calc(100% - 20px)',
+            minWidth: '280px',
+            borderRadius: '0 50px 50px 0'
+        },
+        visibilityOnButton: {
+            display: 'flex',
+            justifyContent: 'center',
+            padding: '5px 0 5px 0',
+            height: '42px',
+            width: '50px',
+            borderRadius: '0 50px 50px 0',
+            position: 'absolute',
+            left: '0',
+            bottom: '3em',
+            backgroundColor: colors.violet,
+            zIndex: 1
+        }
+    }
 
     const {data, isSuccess} = useGetBoardsQuery()
     const { refetch } = useGetBoardByIdQuery(selectedBoardId ?? skipToken)
@@ -137,9 +148,14 @@ const LeftSection: () => ReactElement = () => {
     }
 
     return (
+        
         <>
-            <div style={{ ...styles.leftSection, width: isSideBarShown ? '300px' : 0, backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)' }}>
-                <AppLogoTitle isDarkMode={isDarkMode} />
+            <div style={!isMobileViewMode ? styles.leftSection : styles.mobileMenu}>
+                {
+                    !isMobileViewMode && (
+                        <AppLogoTitle isDarkMode={isDarkMode} />
+                    )
+                }
 
                 <div style={styles.boardsAnnounce}>
                     <HeaderTypography>
@@ -155,14 +171,14 @@ const LeftSection: () => ReactElement = () => {
                                     <ListItemIcon>
                                         <GridView htmlColor={selectedBoardId === board.id ? 'white' : 'rgba(118,122,134,255)'} />
                                     </ListItemIcon>
-                                    <ListItemText sx={{ '& > span': { color: selectedBoardId === board.id ? 'white' : 'rgba(118,122,134,255)' } }} primary={`${board.name}`} />
+                                    <ListItemText sx={{ '& > span': { color: selectedBoardId === board.id ? 'white' : 'rgba(118,122,134,255)' }, '& .MuiTypography-root': { textOverflow: 'ellipsis', width: '150px', overflow: 'hidden', whiteSpace: 'nowrap' } }} primary={`${board.name}`} />
                                 </ListItemButton>
                             </ListItem>
                         )
                     })}
                 </List>
 
-                <ButtonBase onClick={handleCreateBoardDialogOpen} sx={styles.leftSectionElement}>
+                <ButtonBase onClick={handleCreateBoardDialogOpen} sx={{...styles.leftSectionElement, marginBottom: '1.5em'}}>
                     <div style={{ width: '56px', display: 'flex' }}>
                         <Add htmlColor={colors.violet} />
                     </div>
@@ -172,25 +188,35 @@ const LeftSection: () => ReactElement = () => {
                 </ButtonBase>
                 <AddEditBoardDialog crudOption={CrudOption.Create} isOpen={isCreateBoardDialogOpen} onClose={handleCreateBoardDialogClose}/>
 
-                <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)' }}>
+                <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)', marginBottom: isMobileViewMode ? '3em' : '0' }}>
                     <LightMode htmlColor='rgba(118,122,134,255)' />
                     <Switch checked={isDarkMode} onChange={handleLightModeChange} sx={{ '& .MuiSwitch-switchBase': { '&.Mui-checked': { color: 'rgba(99,95,199,255)', '& + .MuiSwitch-track': { backgroundColor: 'rgba(99,95,199,255)' } } }, }} />
                     <DarkMode htmlColor='rgba(118,122,134,255)' />
                 </div>
                 
-                <ButtonBase onClick={handleHideSideMenu} sx={{...styles.leftSectionElement, marginTop: '1em', marginBottom: '3em'}}>
-                    <div style={{ width: '56px', display: 'flex' }}>
-                        <VisibilityOff htmlColor={colors.headersGrey} />
-                    </div>
-                    <Typography color={colors.headersGrey}>
-                        Hide Sidebar
-                    </Typography>
-                </ButtonBase>
+                {
+                    !isMobileViewMode && (
+                        <ButtonBase onClick={handleHideSideMenu} sx={{...styles.leftSectionElement, marginTop: '1em', marginBottom: '3em'}}>
+                            <div style={{ width: '56px', display: 'flex' }}>
+                                <VisibilityOff htmlColor={colors.headersGrey} />
+                            </div>
+                            <Typography color={colors.headersGrey}>
+                                Hide Sidebar
+                            </Typography>
+                        </ButtonBase>
+                    )
+                }
 
             </div>
-            <ButtonBase onClick={handleShowSideMenu} sx={styles.visibilityOnButton}>
-                <Visibility htmlColor='white' />
-            </ButtonBase>
+
+            {
+                !isMobileViewMode && (
+                    <ButtonBase onClick={handleShowSideMenu} sx={styles.visibilityOnButton}>
+                        <Visibility htmlColor='white' />
+                    </ButtonBase>
+                )
+            }
+        
         </>
     )
 }

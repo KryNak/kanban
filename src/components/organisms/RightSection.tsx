@@ -11,13 +11,14 @@ const RightSection: () => ReactElement = () => {
 
     const isDarkMode = useSelector((state: RootState) => state.isDarkMode.value)
     const isSideBarShown = useSelector((state: RootState) => state.isSideBarShown.value)
+    const isMobileViewMode = useSelector((state: RootState) => state.isMobileViewMode.value)
 
     const styles: {[name: string]: CSSProperties} = {
         rigthSection: {
-            width: '100%',
+            width: isSideBarShown ? 'calc(100% - 300px)' : '100%',
             height: '100%',
-            transition: 'margin-left .5s, width .5s',
-            overflowX: 'hidden'
+            overflowX: 'hidden',
+            transition: 'width 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
         },
         content: {
             width: '100%',
@@ -25,14 +26,15 @@ const RightSection: () => ReactElement = () => {
             transition: 'background-color .5s',
             height: 'calc(100% - 80px)'
         },
+        mainSection: {
+            width: '100%',
+            height: '100%',
+            overflowX: 'hidden'
+        }
     }
 
     return (
-        <div style={{
-            ...styles.rigthSection, 
-            marginLeft: isSideBarShown ? '300px' : 0, 
-            width: isSideBarShown ? 'calc(100% - 300px)' : '100%'
-            }}>
+        <div style={isMobileViewMode ? styles.mainSection : styles.rigthSection}>
             <Navigation/>
             <div style={{
                 ...styles.content, 
