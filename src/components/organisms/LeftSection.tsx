@@ -37,7 +37,7 @@ const LeftSection: () => ReactElement = () => {
         },
         leftSectionCollapse: {
             overflowX: 'hidden',
-            transition: 'cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+            transition: 'width 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
             width: isSideBarShown ? '300px' : '0'
         },
         mobileMenu: {

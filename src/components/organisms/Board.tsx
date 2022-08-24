@@ -21,6 +21,7 @@ function Board(): React.ReactElement {
     const darkMode: boolean = useSelector((state: RootState) => state.isDarkMode.value)
     const selectedBoard: BoardModel | null = useSelector((state: RootState) => state.selectedBoard.value)
     const selectedBoardId: string | null = useSelector((state: RootState) => state.selectedBoardId.value)
+    const isMobileViewMode: boolean = useSelector((state: RootState) => state.isMobileViewMode.value)
 
     const [updateTaskPosition] = useUpdateTaskPositionMutation()
     const {data: fetchedBoard, isSuccess} = useGetBoardByIdQuery(selectedBoardId ?? skipToken)
@@ -149,15 +150,34 @@ function Board(): React.ReactElement {
 
     const boardSelectedContent: ReactElement = (
         <Stack sx={{...styles.horizonalListOfColumns, ...scroll}}>
-            <DragDropContext onDragEnd={onDragEnd}>
+
             {
-                selectedBoard && selectedBoard.columns.map((column) => {
-                    return (
-                        <BoardColumn key={column.id} name={column.name} columnId={column.id} color={column.color} />
-                    )
-                })
+                isMobileViewMode ? (
+                    <>
+                    {
+                        selectedBoard && selectedBoard.columns.map((column) => {
+                            return (
+                                <DragDropContext onDragEnd={onDragEnd}>
+                                    <BoardColumn key={column.id} name={column.name} columnId={column.id} color={column.color} />
+                                </DragDropContext>
+                            )
+                        })
+                    }
+                    </>
+                ) : (
+                    <DragDropContext onDragEnd={onDragEnd}>
+                    {
+                        selectedBoard && selectedBoard.columns.map((column) => {
+                            return (
+                                <BoardColumn key={column.id} name={column.name} columnId={column.id} color={column.color} />
+                            )
+                        })
+                    }
+                    </DragDropContext>
+                )
             }
-            </DragDropContext>
+
+
             <ButtonBase onClick={handleEditBoardDialogOpen} sx={{...styles.addColumn}}>
                 <Typography fontSize={22} color={'rgba(118,122,134,255)'}>
                     + New Colmun
