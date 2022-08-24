@@ -161,7 +161,7 @@ const Navigation: () => ReactElement = () => {
                 <li style={{...styles.endItems}}>
                     {
                         isTabletViewMode ? (
-                            <IconButton onClick={handleAddTaskDialogOpen} sx={{backgroundColor: colors.violet, color: colors.violet, padding: '10px 15px', height: '40px', borderRadius: '25px', '&:hover': {backgroundColor: colors.violet}}}>
+                            <IconButton onClick={handleAddTaskDialogOpen} sx={{backgroundColor: colors.violet, color: colors.violet, padding: '10px 15px', height: '38px', borderRadius: '25px', '&:hover': {backgroundColor: colors.violet}}}>
                                 <Add htmlColor={colors.primaryLight}/>
                             </IconButton>
                         ): (

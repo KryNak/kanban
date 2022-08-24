@@ -28,24 +28,36 @@ const LeftSection: () => ReactElement = () => {
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            width: isSideBarShown ? '300px' : '0px',
+            minWidth: '300px',
             overflowX: 'hidden',
             position: 'relative',
             zIndex: 2,
             backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)',
-            transition: 'background-color 0.5s, width 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
+            transition: 'background-color 0.5s'
+        },
+        leftSectionCollapse: {
+            overflowX: 'hidden',
+            transition: 'cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+            width: isSideBarShown ? '300px' : '0'
         },
         mobileMenu: {
-            height: isSideBarShown ? 'calc(100% - 80px)' : '0px',
+            minHeight: 'calc(100vh - 80px)',
             width: '100%',
             overflowX: 'hidden',
-            position: 'absolute',
             backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)',
-            transition: 'background-color 0.5s, height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
             top: '80px',
             display: 'flex',
             flexDirection: 'column',
-            zIndex: 2
+            zIndex: 2,
+            transition: 'background-color 0.5s'
+        },
+        mobileCollapse: {
+            top: '80px',
+            position: 'absolute',
+            transition: 'height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+            height: isSideBarShown ? 'calc(100% - 80px)' : '0px',
+            overflowY: 'hidden',
+            width: '100%'
         },
         boardsAnnounce: {
             marginLeft: '1.5em',
@@ -149,7 +161,7 @@ const LeftSection: () => ReactElement = () => {
 
     return (
         
-        <>
+        <div style={isMobileViewMode ? styles.mobileCollapse : styles.leftSectionCollapse}>
             <div style={!isMobileViewMode ? styles.leftSection : styles.mobileMenu}>
                 {
                     !isMobileViewMode && (
@@ -217,6 +229,6 @@ const LeftSection: () => ReactElement = () => {
                 )
             }
         
-        </>
+        </div>
     )
 }
