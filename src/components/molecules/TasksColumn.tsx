@@ -24,7 +24,7 @@ function BoardColumn({name, columnId, color, style, onClickBack, onClickForward}
     const styles: {[name: string]: React.CSSProperties} = {
         column: {
             paddingBottom: '50px',
-            minWidth: isMobileViewMode ? '100vw' : '370px',
+            minWidth: isMobileViewMode ? '100vw' : '350px',
             display: 'flex',
             justifyContent: isMobileViewMode ? 'space-between' : 'flex-start'
         }
@@ -34,7 +34,7 @@ function BoardColumn({name, columnId, color, style, onClickBack, onClickForward}
         <div style={{...styles.column, ...style}}>
             {
                 isMobileViewMode && (
-                    <ButtonBase onClick={onClickBack} sx={{width: 'calc((100vw - 370px) / 2)', marginBottom: '-50px'}}>
+                    <ButtonBase disableRipple onClick={onClickBack} sx={{width: `50px`, marginBottom: '-50px'}}>
                         <ArrowBackIosNew htmlColor={colors.violet}/>
                     </ButtonBase>
                 )
@@ -48,7 +48,7 @@ function BoardColumn({name, columnId, color, style, onClickBack, onClickForward}
 
             {
                 isMobileViewMode && (
-                    <ButtonBase onClick={onClickForward} sx={{width: 'calc((100vw - 370px) / 2)', marginBottom: '-50px'}}>
+                    <ButtonBase disableRipple onClick={onClickForward} sx={{width: `50px`, marginBottom: '-50px'}}>
                         <ArrowForwardIos htmlColor={colors.violet}/>
                     </ButtonBase>
                 )
