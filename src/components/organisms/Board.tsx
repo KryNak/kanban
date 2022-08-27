@@ -1,6 +1,6 @@
 import { ButtonBase, Stack, Typography } from "@mui/material"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
-import React, { ReactElement, useEffect, useState } from "react"
+import React, { ReactElement, useEffect, useRef, useState } from "react"
 import { DragDropContext, DropResult } from "react-beautiful-dnd"
 import { useDispatch } from "react-redux"
 import { useSelector } from "react-redux"
@@ -31,16 +31,20 @@ function Board(): React.ReactElement {
         dispatch(setSelectedBoard(fetchedBoard ?? null))
     }, [JSON.stringify(fetchedBoard)])
 
+    const [selectedColumn, setSelectedColumn] = useState<number>(0)
+    const containerRef = useRef<HTMLElement>()
+
     const styles: {[name: string]: React.CSSProperties} = {
         horizonalListOfColumns: {
             display: 'flex',
             flexDirection: 'row',
             height: '100%',
             gap: '1.5em',
-            paddingLeft: '1.5em',
-            paddingRight: '1.5em',
-            overflowX: 'auto',
-            overflowY: 'hidden'
+            paddingLeft: isMobileViewMode ? '0' : '1.5em',
+            paddingRight: isMobileViewMode ? '0' : '1.5em',
+            overflowX: isMobileViewMode ? 'hidden' : 'auto',
+            overflowY: 'hidden',
+            zIndex: '1'
         },
         addColumn: {
             marginTop: '50px', 
@@ -148,22 +152,34 @@ function Board(): React.ReactElement {
             
     }
 
+    const onClickForward: () => void = () => {
+        if(selectedBoard && selectedBoard.columns.length - 1 > selectedColumn){
+            setSelectedColumn(prev => prev + 1)
+        }
+    }
+
+    const onClickBack: () => void = () => {
+        if(selectedColumn > 0) {
+            setSelectedColumn(prev => prev - 1)
+        }
+    }
+
     const boardSelectedContent: ReactElement = (
-        <Stack sx={{...styles.horizonalListOfColumns, ...scroll}}>
+        <Stack ref={containerRef} sx={{...styles.horizonalListOfColumns, ...scroll}}>
 
             {
                 isMobileViewMode ? (
-                    <>
+                    <div style={{display: 'flex', flexDirection: 'row', position: 'relative', left: `calc(${selectedColumn} * -100vw)`, transition: isMobileViewMode ? 'left 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms' : ''}}>
                     {
                         selectedBoard && selectedBoard.columns.map((column) => {
                             return (
-                                <DragDropContext onDragEnd={onDragEnd}>
-                                    <BoardColumn key={column.id} name={column.name} columnId={column.id} color={column.color} />
+                                <DragDropContext key={column.id} onDragEnd={onDragEnd}>
+                                    <BoardColumn onClickBack={onClickBack} onClickForward={onClickForward} name={column.name} columnId={column.id} color={column.color} />
                                 </DragDropContext>
                             )
                         })
                     }
-                    </>
+                    </div>
                 ) : (
                     <DragDropContext onDragEnd={onDragEnd}>
                     {

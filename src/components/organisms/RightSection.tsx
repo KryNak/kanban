@@ -22,7 +22,6 @@ const RightSection: () => ReactElement = () => {
         },
         content: {
             width: '100%',
-            minWidth: '500px',
             transition: 'background-color .5s',
             height: 'calc(100% - 80px)'
         },

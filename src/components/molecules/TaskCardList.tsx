@@ -25,6 +25,7 @@ function TodoCardList({columnId}: TodoCardListProp): React.ReactElement {
             height: 'calc(100% - 50px)',
             overflowX: 'hidden',
             alignItems: 'flex-start',
+            width: '370px',
             '&::-webkit-scrollbar': {
                 width: '15px',
                 backgroundColor: darkMode ? 'rgba(34,33,45,255)' : 'rgba(245,247,254,255)',

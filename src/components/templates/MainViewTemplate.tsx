@@ -13,7 +13,7 @@ const styles: {[name: string]: React.CSSProperties} = {
         width: '100%',
         overflow: 'hidden',
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row-reverse'
     },
     
 }
@@ -35,8 +35,8 @@ useEffect(() => {
 
      return (
         <div style={styles.container}>
-            <LeftSection/>
             <RightSection/>
+            <LeftSection/>
         </div>
     )
 }
