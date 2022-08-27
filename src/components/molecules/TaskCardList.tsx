@@ -15,6 +15,7 @@ function TodoCardList({columnId}: TodoCardListProp): React.ReactElement {
 
     const darkMode = useSelector((state: RootState) => state.isDarkMode.value)
     const selectedBoard = useSelector((root: RootState) => root.selectedBoard.value)!!
+    const isMobileViewMode = useSelector((root: RootState) => root.isMobileViewMode.value)
     const tasks = selectedBoard?.columns.find(column => column.id === columnId)?.tasks ?? []
 
     const styles: {[name: string]: any} = {
@@ -25,7 +26,7 @@ function TodoCardList({columnId}: TodoCardListProp): React.ReactElement {
             height: 'calc(100% - 50px)',
             overflowX: 'hidden',
             alignItems: 'flex-start',
-            width: '370px',
+            width: isMobileViewMode ? '250px' : '350px',
             '&::-webkit-scrollbar': {
                 width: '15px',
                 backgroundColor: darkMode ? 'rgba(34,33,45,255)' : 'rgba(245,247,254,255)',
