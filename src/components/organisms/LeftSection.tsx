@@ -1,6 +1,6 @@
 import { Add, DarkMode, GridView, LightMode, Visibility, VisibilityOff } from "@mui/icons-material"
-import { ButtonBase, Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
-import { CSSProperties, ReactElement, useEffect, useState } from "react"
+import { ButtonBase, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
+import {CSSProperties, ReactElement, useEffect, useState} from "react"
 import { HeaderTypography } from "../atoms/HeaderTypography"
 import { AppLogoTitle } from "../molecules/AppLogoTitle"
 import { colors } from '../../colors'
@@ -23,6 +23,23 @@ const LeftSection: () => ReactElement = () => {
     const isSideBarShown: boolean = useSelector((state: RootState) => state.isSideBarShown.value)
     const isMobileViewMode: boolean = useSelector((state: RootState) => state.isMobileViewMode.value)
 
+    const [innerHeight, setInnerHeight] = useState<number>(0)
+
+    useEffect(() => {
+        setInnerHeight(window.innerHeight)
+        console.log(document.getElementById('mobile-menu')?.clientHeight ?? 0)
+
+        const handleResize = () => {
+            console.log(document.getElementById('mobile-menu')?.ariaValueMin ?? 0)
+            setInnerHeight(window.innerHeight)
+        }
+
+        window.addEventListener('resize', handleResize)
+        return () => {
+            window.removeEventListener('resize', handleResize)
+        }
+    }, [])
+
     const styles: {[name: string]: CSSProperties} = {
         leftSection: {
             height: '100%',
@@ -41,7 +58,8 @@ const LeftSection: () => ReactElement = () => {
             width: isSideBarShown ? '300px' : '0'
         },
         mobileMenu: {
-            minHeight: 'calc(100vh - 80px)',
+            minHeight: `${innerHeight - 80}px`,
+            maxHeight: `${innerHeight - 80}px`,
             width: '100%',
             overflowX: 'hidden',
             backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)',
@@ -162,7 +180,7 @@ const LeftSection: () => ReactElement = () => {
     return (
         
         <div style={isMobileViewMode ? styles.mobileCollapse : styles.leftSectionCollapse}>
-            <div style={!isMobileViewMode ? styles.leftSection : styles.mobileMenu}>
+            <div style={isMobileViewMode ? styles.mobileMenu : styles.leftSection}>
                 {
                     !isMobileViewMode && (
                         <AppLogoTitle isDarkMode={isDarkMode} />
@@ -200,7 +218,7 @@ const LeftSection: () => ReactElement = () => {
                 </ButtonBase>
                 <AddEditBoardDialog crudOption={CrudOption.Create} isOpen={isCreateBoardDialogOpen} onClose={handleCreateBoardDialogClose}/>
 
-                <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)', marginBottom: isMobileViewMode ? '30px' : '0', zIndex: isMobileViewMode ? '3' : 'inherit', position: 'relative' }}>
+                <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)', marginBottom: isMobileViewMode ? '3em' : '0', zIndex: isMobileViewMode ? '3' : 'inherit', position: 'relative' }}>
                     <LightMode htmlColor='rgba(118,122,134,255)' />
                     <Switch checked={isDarkMode} onChange={handleLightModeChange} sx={{ '& .MuiSwitch-switchBase': { '&.Mui-checked': { color: 'rgba(99,95,199,255)', '& + .MuiSwitch-track': { backgroundColor: 'rgba(99,95,199,255)' } } }, }} />
                     <DarkMode htmlColor='rgba(118,122,134,255)' />
