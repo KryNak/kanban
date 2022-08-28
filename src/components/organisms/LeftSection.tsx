@@ -42,6 +42,7 @@ const LeftSection: () => ReactElement = () => {
         },
         mobileMenu: {
             minHeight: 'calc(100vh - 80px)',
+            maxHeight: 'calc(100vh - 80px)',
             width: '100%',
             overflowX: 'hidden',
             backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)',
@@ -86,7 +87,7 @@ const LeftSection: () => ReactElement = () => {
             flexShrink: 0
         },
         themeMode: {
-            marginTop: '1.5em',
+            marginTop: 'auto',
             marginLeft: '1.5em',
             width: 'calc(100% - 3em)',
             borderRadius: '5px',
@@ -162,7 +163,7 @@ const LeftSection: () => ReactElement = () => {
     return (
         
         <div style={isMobileViewMode ? styles.mobileCollapse : styles.leftSectionCollapse}>
-            <div style={!isMobileViewMode ? styles.leftSection : styles.mobileMenu}>
+            <div style={isMobileViewMode ? styles.mobileMenu : styles.leftSection}>
                 {
                     !isMobileViewMode && (
                         <AppLogoTitle isDarkMode={isDarkMode} />
