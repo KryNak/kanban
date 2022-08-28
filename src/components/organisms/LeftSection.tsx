@@ -54,7 +54,7 @@ const LeftSection: () => ReactElement = () => {
         },
         mobileCollapse: {
             top: '80px',
-            position: 'absolute',
+            position: 'fixed',
             transition: 'height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
             height: isSideBarShown ? 'calc(100% - 80px)' : '0px',
             overflowY: 'hidden',
@@ -201,7 +201,7 @@ const LeftSection: () => ReactElement = () => {
                 </ButtonBase>
                 <AddEditBoardDialog crudOption={CrudOption.Create} isOpen={isCreateBoardDialogOpen} onClose={handleCreateBoardDialogClose}/>
 
-                <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)', marginBottom: isMobileViewMode ? '8em' : '0', zIndex: isMobileViewMode ? '3' : 'inherit', position: 'relative' }}>
+                <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)', marginBottom: isMobileViewMode ? '3em' : '0', zIndex: isMobileViewMode ? '3' : 'inherit', position: 'relative' }}>
                     <LightMode htmlColor='rgba(118,122,134,255)' />
                     <Switch checked={isDarkMode} onChange={handleLightModeChange} sx={{ '& .MuiSwitch-switchBase': { '&.Mui-checked': { color: 'rgba(99,95,199,255)', '& + .MuiSwitch-track': { backgroundColor: 'rgba(99,95,199,255)' } } }, }} />
                     <DarkMode htmlColor='rgba(118,122,134,255)' />
