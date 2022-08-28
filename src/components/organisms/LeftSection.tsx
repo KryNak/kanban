@@ -86,7 +86,7 @@ const LeftSection: () => ReactElement = () => {
             flexShrink: 0
         },
         themeMode: {
-            marginTop: 'auto',
+            marginTop: '1.5em',
             marginLeft: '1.5em',
             width: 'calc(100% - 3em)',
             borderRadius: '5px',
