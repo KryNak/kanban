@@ -12,9 +12,7 @@ import { CrudOption } from "../../enums"
 import { AddEditBoardDialog } from "../molecules/AddEditBoardDialog"
 import { BoardColumn } from "../molecules/TasksColumn"
 
-export {Board}
-
-function Board(): React.ReactElement {
+export function Board(): React.ReactElement {
 
     const dispatch = useDispatch()
 
@@ -26,16 +24,21 @@ function Board(): React.ReactElement {
     const [updateTaskPosition] = useUpdateTaskPositionMutation()
     const {data: fetchedBoard, isSuccess} = useGetBoardByIdQuery(selectedBoardId ?? skipToken)
 
+    const [selectedColumn, setSelectedColumn] = useState<number>(0)
+
     useEffect(() => {
         if(!isSuccess) return;
         dispatch(setSelectedBoard(fetchedBoard ?? null))
     }, [JSON.stringify(fetchedBoard)])
 
-    const [selectedColumn, setSelectedColumn] = useState<number>(0)
-    const containerRef = useRef<HTMLElement>()
+    useEffect(() => {
+        setSelectedColumn(0)
+    }, [selectedBoardId])
+
+
 
     const styles: {[name: string]: React.CSSProperties} = {
-        horizonalListOfColumns: {
+        horizontalListOfColumns: {
             display: 'flex',
             flexDirection: 'row',
             height: '100%',
@@ -165,7 +168,7 @@ function Board(): React.ReactElement {
     }
 
     const boardSelectedContent: ReactElement = (
-        <Stack ref={containerRef} sx={{...styles.horizonalListOfColumns, ...scroll}}>
+        <Stack sx={{...styles.horizontalListOfColumns, ...scroll}}>
 
             {
                 isMobileViewMode ? (
