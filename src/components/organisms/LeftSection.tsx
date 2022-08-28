@@ -200,7 +200,7 @@ const LeftSection: () => ReactElement = () => {
                 </ButtonBase>
                 <AddEditBoardDialog crudOption={CrudOption.Create} isOpen={isCreateBoardDialogOpen} onClose={handleCreateBoardDialogClose}/>
 
-                <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)', marginBottom: isMobileViewMode ? '30px' : '0' }}>
+                <div style={{ ...styles.themeMode, backgroundColor: isDarkMode ? 'rgba(33,33,45,255)' : 'rgba(245,247,254,255)', marginBottom: isMobileViewMode ? '30px' : '0', zIndex: isMobileViewMode ? '3' : 'inherit' }}>
                     <LightMode htmlColor='rgba(118,122,134,255)' />
                     <Switch checked={isDarkMode} onChange={handleLightModeChange} sx={{ '& .MuiSwitch-switchBase': { '&.Mui-checked': { color: 'rgba(99,95,199,255)', '& + .MuiSwitch-track': { backgroundColor: 'rgba(99,95,199,255)' } } }, }} />
                     <DarkMode htmlColor='rgba(118,122,134,255)' />
