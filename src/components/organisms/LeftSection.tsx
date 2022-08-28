@@ -1,6 +1,6 @@
 import { Add, DarkMode, GridView, LightMode, Visibility, VisibilityOff } from "@mui/icons-material"
-import { ButtonBase, Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
-import { CSSProperties, ReactElement, useEffect, useState } from "react"
+import { ButtonBase, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
+import {CSSProperties, ReactElement, useEffect, useState} from "react"
 import { HeaderTypography } from "../atoms/HeaderTypography"
 import { AppLogoTitle } from "../molecules/AppLogoTitle"
 import { colors } from '../../colors'
@@ -23,6 +23,23 @@ const LeftSection: () => ReactElement = () => {
     const isSideBarShown: boolean = useSelector((state: RootState) => state.isSideBarShown.value)
     const isMobileViewMode: boolean = useSelector((state: RootState) => state.isMobileViewMode.value)
 
+    const [innerHeight, setInnerHeight] = useState<number>(0)
+
+    useEffect(() => {
+        setInnerHeight(window.innerHeight)
+        console.log(document.getElementById('mobile-menu')?.clientHeight ?? 0)
+
+        const handleResize = () => {
+            console.log(document.getElementById('mobile-menu')?.ariaValueMin ?? 0)
+            setInnerHeight(window.innerHeight)
+        }
+
+        window.addEventListener('resize', handleResize)
+        return () => {
+            window.removeEventListener('resize', handleResize)
+        }
+    }, [])
+
     const styles: {[name: string]: CSSProperties} = {
         leftSection: {
             height: '100%',
@@ -41,8 +58,8 @@ const LeftSection: () => ReactElement = () => {
             width: isSideBarShown ? '300px' : '0'
         },
         mobileMenu: {
-            minHeight: 'calc(100vh - 80px)',
-            maxHeight: 'calc(100vh - 80px)',
+            minHeight: `${innerHeight - 80}px`,
+            maxHeight: `${innerHeight - 80}px`,
             width: '100%',
             overflowX: 'hidden',
             backgroundColor: isDarkMode ? 'rgba(44,44,56,255)' : 'rgba(255, 255, 255, 255)',
@@ -54,7 +71,7 @@ const LeftSection: () => ReactElement = () => {
         },
         mobileCollapse: {
             top: '80px',
-            position: 'fixed',
+            position: 'absolute',
             transition: 'height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
             height: isSideBarShown ? 'calc(100% - 80px)' : '0px',
             overflowY: 'hidden',
