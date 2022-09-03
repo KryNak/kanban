@@ -14,7 +14,7 @@ root.render(
             domain={process.env.REACT_APP_AUTH0_DOMAIN!!}
             clientId={process.env.REACT_APP_AUTH0_CLIENT_ID!!}
             redirectUri={process.env.REACT_APP_AUTH0_REDIRECT_URL!!}
-            audience={process.env.REACT_APP_AUTH0_AUDIENCE}
+            audience={process.env.REACT_APP_AUTH0_AUDIENCE!!}
             useRefreshTokens={true}
             cacheLocation={'localstorage'}
         >
@@ -23,5 +23,5 @@ root.render(
             </Provider>
         </Auth0Provider>
     </Router>
-);
+)
 
