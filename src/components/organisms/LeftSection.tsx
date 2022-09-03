@@ -1,4 +1,4 @@
-import { Add, DarkMode, GridView, LightMode, Visibility, VisibilityOff } from "@mui/icons-material"
+import {Add, DarkMode, GridView, LightMode, Logout, Visibility, VisibilityOff} from "@mui/icons-material"
 import { ButtonBase, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
 import {CSSProperties, ReactElement, useEffect, useState} from "react"
 import { HeaderTypography } from "../atoms/HeaderTypography"
@@ -12,6 +12,7 @@ import { hideSideBar, showSideBar } from "../../app/features/isSideBarShown/isSi
 import { selectDarkMode, selectLightMode } from "../../app/features/isDarkMode/isDarkModeSlice"
 import { setSelectedBoardId } from "../../app/features/selectedBoardId/selectedBoardId"
 import { skipToken } from "@reduxjs/toolkit/dist/query"
+import {useAuth0} from "@auth0/auth0-react";
 export {LeftSection}
 
 const LeftSection: () => ReactElement = () => {
@@ -25,12 +26,12 @@ const LeftSection: () => ReactElement = () => {
 
     const [innerHeight, setInnerHeight] = useState<number>(0)
 
+    const { logout } = useAuth0()
+
     useEffect(() => {
         setInnerHeight(window.innerHeight)
-        console.log(document.getElementById('mobile-menu')?.clientHeight ?? 0)
 
         const handleResize = () => {
-            console.log(document.getElementById('mobile-menu')?.ariaValueMin ?? 0)
             setInnerHeight(window.innerHeight)
         }
 

@@ -9,6 +9,7 @@ import { isTabletViewModeReducer } from "./features/isTabletViewModel/isTabletVi
 import { selectedBoardSliceReducer } from "./features/selectedBoard/selectedBoardSlice"
 import { selectedBoardIdSliceReducer, setSelectedBoardId } from "./features/selectedBoardId/selectedBoardId"
 import { selectedTaskSliceReducer } from "./features/selectedTask/slectedTask"
+import {sec} from "../security";
 
 export type UpdateBoardType = {
     id: string, 
@@ -77,7 +78,16 @@ export class UpdateTaskPosition {
 
 export const kanbanApi = createApi({
     reducerPath: "kanbanApi",
-    baseQuery: fetchBaseQuery({ baseUrl: `${process.env.REACT_APP_BACKEND_URL}/api` }),
+    baseQuery: fetchBaseQuery({
+        baseUrl: `${process.env.REACT_APP_BACKEND_URL}/api`,
+        prepareHeaders: async (headers) => {
+            const access_token = await sec.getAccessTokenSilently()();
+            if (access_token) {
+                headers.set('Authorization', `Bearer ${access_token}`);
+            }
+            return headers;
+        }
+    }),
     tagTypes: ["Boards", "Columns"],
     endpoints: (builder) => ({
         getBoards: builder.query<Board[], void>({

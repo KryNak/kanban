@@ -1,5 +1,14 @@
-import { Add, ArrowDownward, ArrowDropDown, ArrowDropUp, ArrowUpward, CoronavirusSharp, MoreVert } from "@mui/icons-material"
-import { ButtonBase, IconButton, Menu, MenuItem, Typography } from "@mui/material"
+import {
+    Add,
+    ArrowDownward,
+    ArrowDropDown,
+    ArrowDropUp,
+    ArrowUpward,
+    CoronavirusSharp, Delete, Edit,
+    Logout, LogoutOutlined, LogoutSharp, LogoutTwoTone,
+    MoreVert
+} from "@mui/icons-material"
+import {ButtonBase, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Typography} from "@mui/material"
 import { ReactElement, useState } from "react"
 import { AddEditTaskDialog } from "../molecules/AddEditTaskDialog"
 import { colors } from '../../colors'
@@ -14,6 +23,7 @@ import { useDispatch } from "react-redux"
 import { hideSideBar, showSideBar } from "../../app/features/isSideBarShown/isSideBarShown"
 import { AppLogoTitle } from "../molecules/AppLogoTitle"
 import { Logo } from "../atoms/Logo"
+import {useAuth0} from "@auth0/auth0-react";
 
 export{Navigation}
 
@@ -66,6 +76,7 @@ const styles: {[name: string]: any} = {
 const Navigation: () => ReactElement = () => {
 
     const dispatch = useDispatch()
+    const { logout } = useAuth0()
 
     const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState<boolean>(false)
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
@@ -211,8 +222,30 @@ const Navigation: () => ReactElement = () => {
                         }}
                         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-                        <MenuItem onClick={handleEditBoardDialogOpen} sx={{color: isDarkMode ? 'white': 'black'}}>Edit Board</MenuItem>
-                        <MenuItem onClick={handleRemovingDialogOpen} sx={{color: '#DC3545'}}>Delete Board</MenuItem>
+                        <MenuItem onClick={handleEditBoardDialogOpen} sx={{color: isDarkMode ? 'white': 'black'}}>
+                            <ListItemIcon sx={{color: isDarkMode ? 'white': 'black'}}>
+                                <Edit/>
+                            </ListItemIcon>
+                            <ListItemText sx={{color: isDarkMode ? 'white': 'black'}}>
+                                Edit Board
+                            </ListItemText>
+                        </MenuItem>
+                        <MenuItem onClick={handleRemovingDialogOpen} sx={{color: '#DC3545'}}>
+                            <ListItemIcon sx={{color: '#DC3545'}}>
+                                <Delete/>
+                            </ListItemIcon>
+                            <ListItemText sx={{color: '#DC3545'}}>
+                                Delete Board
+                            </ListItemText>
+                        </MenuItem>
+                        <MenuItem onClick={() => logout({returnTo: window.location.origin})}>
+                            <ListItemIcon sx={{color: isDarkMode ? 'white': 'black'}}>
+                                <Logout/>
+                            </ListItemIcon>
+                            <ListItemText sx={{color: isDarkMode ? 'white': 'black'}}>
+                                Logout
+                            </ListItemText>
+                        </MenuItem>
                     </Menu>
                 </li>
             </ul>
