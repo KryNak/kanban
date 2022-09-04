@@ -185,7 +185,7 @@ const Navigation: () => ReactElement = () => {
                     }
                 </li>
                 <li>
-                    <IconButton sx={{...styles.moreButton}} disabled={selectedBoardId ? false : true} onClick={handleMenuClick}>
+                    <IconButton sx={{...styles.moreButton}} onClick={handleMenuClick}>
                         <MoreVert htmlColor={colors.violet} />
                     </IconButton>
                     <Menu anchorEl={anchorEl}
@@ -222,7 +222,7 @@ const Navigation: () => ReactElement = () => {
                         }}
                         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-                        <MenuItem onClick={handleEditBoardDialogOpen} sx={{color: isDarkMode ? 'white': 'black'}}>
+                        <MenuItem disabled={selectedBoardId ? false : true} onClick={handleEditBoardDialogOpen} sx={{color: isDarkMode ? 'white': 'black'}}>
                             <ListItemIcon sx={{color: isDarkMode ? 'white': 'black'}}>
                                 <Edit/>
                             </ListItemIcon>
@@ -230,7 +230,7 @@ const Navigation: () => ReactElement = () => {
                                 Edit Board
                             </ListItemText>
                         </MenuItem>
-                        <MenuItem onClick={handleRemovingDialogOpen} sx={{color: '#DC3545'}}>
+                        <MenuItem disabled={selectedBoardId ? false : true} onClick={handleRemovingDialogOpen} sx={{color: '#DC3545'}}>
                             <ListItemIcon sx={{color: '#DC3545'}}>
                                 <Delete/>
                             </ListItemIcon>
